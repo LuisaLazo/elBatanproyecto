@@ -1,0 +1,47 @@
+:root {
+  --color-primario: #1b4d3e;     /* Verde oscuro principal (ahora para textos o elementos destacados) */
+  --color-acento: #e8832a;       /* Color de acento (inspirado en el detalle del ají) */
+  --color-texto-claro: #FFFFFF;  
+  
+  --color-texto-oscuro: #222222; /* Texto oscuro para legibilidad sobre el fondo crema */
+  --color-fondo-claro: #f4f1ea;  /* Fondo principal en color crema */
+}
+
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  background-color: var(--color-fondo-claro); /* Fondo general color crema */
+  color: var(--color-texto-oscuro);            /* Texto general oscuro para buen contraste */
+}
+
+app-root {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+main {
+  flex-grow: 1;
+  padding: 20px 40px;
+}
+
+.bg-batan-primary {
+  background-color: var(--color-primario) !important;
+}
+
+.text-batan-accent {
+  color: var(--color-acento) !important;
+}
+
+.btn-outline-accent {
+  --bs-btn-color: var(--color-acento);
+  --bs-btn-border-color: var(--color-acento);
+  --bs-btn-hover-color: #fff;
+  --bs-btn-hover-bg: var(--color-acento);
+  --bs-btn-hover-border-color: var(--color-acento);
+  --bs-btn-active-color: #fff;
+  --bs-btn-active-bg: var(--color-acento);
+  --bs-btn-active-border-color: var(--color-acento);
+  --bs-btn-disabled-color: var(--color-acento);
+  --bs-btn-disabled-bg: transparent;
+}

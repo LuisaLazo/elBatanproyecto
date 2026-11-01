@@ -1,0 +1,13 @@
+{
+    "/api":{
+        "target":"http://localhost:8082/elBatan",
+        "secure":false,
+        "logLevel":"debug"
+    },
+    "/elBatan":{
+        "target":"http://localhost:8082",
+        "secure":false,
+        "logLevel":"debug"
+    }
+
+}
