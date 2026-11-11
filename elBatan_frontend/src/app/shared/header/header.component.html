@@ -1,65 +1,35 @@
-
-<nav class="navbar navbar-expand-lg navbar-dark bg-batan-primary">
-  <div class="container-fluid">
-    <nav class="navbar    ">
-  <div class="container">
-    <a class="navbar-brand" routerLink="/home">
-      <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTa_CzNgO0vFB-6mgVHcO40A8sXlZaT0XVIxJFzDoycLw&s=10" alt="" width="50" height="50">
+<nav class="navbar navbar-expand-xl bg-batan-primary px-3 px-lg-5" data-bs-theme="dark" aria-label="Navegación principal">
+  <div class="container-fluid px-0">
+    <a class="navbar-brand d-flex align-items-center py-0" routerLink="/home" aria-label="Inicio de El Batán">
+      <img class="brand-logo" src="logo-el-batan-transparente.png" alt="El Batán, restaurante y pollería" width="144" height="96">
     </a>
-  </div>
-</nav>
-    <a class="navbar-brand" routerLink="/home">El Batan</a>
 
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent">
-      <span class="navbar-toggler-icon"></span>
-    </button>
+    <div class="d-flex align-items-center gap-3 order-xl-last ms-auto">
+      <a class="nav-link cart-link position-relative" routerLink="/carrito"
+         [attr.aria-label]="'Carrito, ' + cartService.totalItems() + ' productos distintos'">
+        <i class="bi bi-bag fs-4" aria-hidden="true"></i>
+        @if (cartService.totalItems() > 0) {
+          <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill cart-count" aria-hidden="true">
+            {{ cartService.totalItems() }}
+          </span>
+        }
+      </a>
 
-    <div class="collapse navbar-collapse" id="navbarSupportedContent">
-      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-        <li class="nav-item">
-          <a class="nav-link" routerLink="/home" routerLinkActive="active">Inicio</a>
-        </li>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+              data-bs-target="#batanNavigation" aria-controls="batanNavigation"
+              aria-expanded="false" aria-label="Mostrar u ocultar menú">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+    </div>
 
-        <!-- MENÚ GESTIÓN: Solo visible para ADMIN -->
-        <li class="nav-item dropdown">
-          <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-            Gestión
-          </a>
-          <ul class="dropdown-menu">
-            <li><a class="dropdown-item" routerLink="/productos">Productos</a></li>
-            <li><a class="dropdown-item" routerLink="/reportes">Reportes</a></li>
-        </ul>
-        </ul>
-
-      <!-- Buscador -->
-      <form class="d-flex me-3" role="search">
-        <input class="form-control me-2" type="search" placeholder="Buscar..." aria-label="Search">
-        <button class="btn btn-outline-accent" type="submit">Buscar</button>
-      </form>
-
-      <!-- ICONO DEL CARRITO -->
-<div class="me-3 position-relative" style="cursor: pointer;" routerLink="/carrito">
-  <i class="bi bi-cart3 text-white fs-4"></i>
-  
-  <!-- CORRECCIÓN: Quitamos el @if para que el badge sea permanente -->
-  <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
-    style="font-size: 0.6rem;">
-    {{cartService.totalItems()}}
-  </span>
-</div>
-
-      <!-- SECCIÓN DE AUTENTICACIÓN -->
-      <div class="d-flex align-items-center ms-lg-3">
-        <!-- Botón que activa el Modal -->
-        <button type="button" class="btn btn-outline-light" data-bs-toggle="modal" data-bs-target="#loginModal">
-          Ingresar
-        </button>
-       
-        <button class="btn btn-danger btn-sm">Cerrar Sesión</button>
-       
-      </div>
-
+    <div class="collapse navbar-collapse" id="batanNavigation">
+      <ul class="navbar-nav mx-auto gap-xl-4 gap-xxl-5 py-3 py-xl-0">
+        <li class="nav-item"><a class="nav-link" routerLink="/home">Inicio</a></li>
+        <li class="nav-item"><a class="nav-link" routerLink="/home" fragment="carta">Nuestra carta</a></li>
+        <li class="nav-item"><a class="nav-link" routerLink="/home" fragment="sobre-nosotros">Sobre nosotros</a></li>
+        <li class="nav-item"><a class="nav-link" routerLink="/home" fragment="ubicacion">Ubicación</a></li>
+        <li class="nav-item"><a class="nav-link" routerLink="/productos">Gestión de productos</a></li>
+      </ul>
     </div>
   </div>
-  
 </nav>

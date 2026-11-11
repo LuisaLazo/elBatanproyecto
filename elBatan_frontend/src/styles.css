@@ -1,5 +1,5 @@
 :root {
-  --color-primario: #1b4d3e;     /* Verde oscuro principal (ahora para textos o elementos destacados) */
+  --color-primario: #315838;     /* Verde oscuro principal (ahora para textos o elementos destacados) */
   --color-acento: #e8832a;       /* Color de acento (inspirado en el detalle del ají) */
   --color-texto-claro: #FFFFFF;  
   
@@ -22,11 +22,15 @@ app-root {
 
 main {
   flex-grow: 1;
-  padding: 20px 40px;
+  padding-bottom: 2rem;
 }
 
 .bg-batan-primary {
   background-color: var(--color-primario) !important;
+}
+
+.text-batan-primary {
+  color: var(--color-primario);
 }
 
 .text-batan-accent {

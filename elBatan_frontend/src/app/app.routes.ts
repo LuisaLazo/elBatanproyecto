@@ -10,6 +10,7 @@ export const routes: Routes = [
         path: '',
         component: MainLayoutComponent,
         children:[
+            {path:'', pathMatch:'full', redirectTo:'home'},
             {path:'home', component:HomeComponent},
         {path:'productos', component:ProductListComponent},
         {path:'productos/nuevo', component:ProductFormComponent},
