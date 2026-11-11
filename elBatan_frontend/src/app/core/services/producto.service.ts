@@ -9,7 +9,7 @@ import { Producto } from '../Interfaces/producto.interface';
 export class ProductoService {
   private http = inject(HttpClient);
   //usamos la ruta del backend
-  private apiUrl = '/api/v1/productos';
+  private apiUrl = '/elBatan/api/v1/productos';
 
   //(Lista) ruta pública que no necesita un token
   getProductos():Observable<Producto[]>{

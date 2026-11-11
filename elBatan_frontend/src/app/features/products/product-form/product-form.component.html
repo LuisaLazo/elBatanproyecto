@@ -1,38 +1,252 @@
-<div class="container mt-4">
-  <div class="card shadow">
-    <div class="card-header bg-batan-primary text-white">
-      <h4>{{ id ? 'Editar' : 'Nuevo' }} Producto</h4>
-    </div>
-    <div class="card-body">
-      <form [formGroup]="form" (ngSubmit)="guardar()">
-        <div class="mb-3">
-          <label class="form-label">Nombre</label>
-          <input type="text" formControlName="nombre" class="form-control">
-        </div>
-        <div class="mb-3">
-          <label class="form-label">Descripción</label>
-          <textarea formControlName="descripcion" class="form-control"></textarea>
-        </div>
-        <div class="row">
-          <div class="col-md-6 mb-3">
-            <label class="form-label">Precio</label>
-            <input type="number" formControlName="precio" class="form-control">
-          </div>
-          <div class="col-md-6 mb-3">
-            <label class="form-label">Stock</label>
-            <input type="number" formControlName="stock" class="form-control">
-          </div>
-        </div>
-        <div class="mb-3">
-          <label class="form-label">Imagen</label>
-          <input type="file" (change)="onFileSelected($event)" class="form-control" accept="image/*">
-        </div>
+<section class="product-editor">
+  <div class="container">
 
-        <div class="mt-4">
-          <button type="submit" class="btn btn-primary me-2" [disabled]="form.invalid">Guardar</button>
-          <a routerLink="/productos" class="btn btn-secondary">Cancelar</a>
+    <a routerLink="/productos" class="back-link d-inline-block mb-3">
+      <i class="bi bi-arrow-left me-2" aria-hidden="true"></i>
+      Volver a productos
+    </a>
+
+    <p class="eyebrow mb-2">El Batán · Administración</p>
+
+    <h1 class="editor-title mb-2">
+      {{ id ? 'Editar producto' : 'Nuevo producto' }}
+    </h1>
+
+    <p class="text-body-secondary mb-4">
+      Prepara una presentación que abra el apetito.
+    </p>
+
+    @if (cargando) {
+      <div class="alert alert-light" role="status">
+        Cargando producto…
+      </div>
+    } @else if (cargaFallida) {
+      <div class="alert alert-warning" role="alert">
+        No pudimos cargar el producto.
+
+        <button
+          type="button"
+          class="btn btn-sm btn-outline-dark ms-2"
+          (click)="cargarProducto()">
+          Reintentar
+        </button>
+      </div>
+    }
+
+    <form [formGroup]="form" (ngSubmit)="guardar()">
+      <fieldset [disabled]="cargando || cargaFallida || guardando">
+        <legend class="visually-hidden">
+          Información del producto
+        </legend>
+
+        <div class="row g-4 align-items-start">
+
+          <!-- Datos del producto -->
+          <div class="col-lg-8">
+            <div class="editor-card">
+
+              <div class="card-heading">
+                <h2 class="h5 mb-1">Información del producto</h2>
+
+                <p class="small text-body-secondary mb-0">
+                  Los campos con * son obligatorios.
+                </p>
+              </div>
+
+              <div class="p-4">
+
+                <div class="mb-4">
+                  <label for="nombre" class="form-label">
+                    Nombre del producto *
+                  </label>
+
+                  <input
+                    id="nombre"
+                    class="form-control"
+                    formControlName="nombre"
+                    maxlength="255"
+                    placeholder="Ej. Pollo a la brasa"
+                    required
+                    [class.is-invalid]="
+                      form.controls.nombre.touched &&
+                      form.controls.nombre.invalid
+                    ">
+
+                  <div class="invalid-feedback">
+                    Escribe un nombre de al menos 3 caracteres.
+                  </div>
+                </div>
+
+                <div class="mb-4">
+                  <label for="descripcion" class="form-label">
+                    Descripción
+                  </label>
+
+                  <textarea
+                    id="descripcion"
+                    class="form-control"
+                    rows="4"
+                    maxlength="255"
+                    formControlName="descripcion"
+                    placeholder="Cuéntanos qué incluye y cómo se sirve.">
+                  </textarea>
+
+                  <div class="form-text text-end">
+                    {{ form.controls.descripcion.value?.length || 0 }}/255
+                  </div>
+                </div>
+
+                <div class="row g-4">
+
+                  <div class="col-sm-6">
+                    <label for="precio" class="form-label">
+                      Precio de venta *
+                    </label>
+
+                    <div class="input-group">
+                      <span class="input-group-text">S/</span>
+
+                      <input
+                        id="precio"
+                        type="number"
+                        min="0.10"
+                        step="0.01"
+                        required
+                        class="form-control"
+                        formControlName="precio"
+                        [class.is-invalid]="
+                          form.controls.precio.touched &&
+                          form.controls.precio.invalid
+                        ">
+                    </div>
+
+                    @if (
+                      form.controls.precio.touched &&
+                      form.controls.precio.invalid
+                    ) {
+                      <p class="small text-danger mt-1 mb-0">
+                        El precio mínimo es S/ 0.10.
+                      </p>
+                    }
+                  </div>
+
+                  <div class="col-sm-6">
+                    <label for="stock" class="form-label">
+                      Stock disponible *
+                    </label>
+
+                    <input
+                      id="stock"
+                      type="number"
+                      min="0"
+                      step="1"
+                      required
+                      class="form-control"
+                      formControlName="stock"
+                      [class.is-invalid]="
+                        form.controls.stock.touched &&
+                        form.controls.stock.invalid
+                      ">
+
+                    <div class="invalid-feedback">
+                      Ingresa una cantidad entera desde 0 hasta 2147483647.
+                    </div>
+
+                    <div class="form-text">
+                      Cantidad de unidades disponibles.
+                    </div>
+                  </div>
+
+                </div>
+              </div>
+
+              <div class="editor-actions d-flex flex-wrap gap-3 justify-content-end">
+                <a
+                  routerLink="/productos"
+                  class="btn btn-outline-secondary"
+                  [class.disabled]="guardando">
+                  Cancelar
+                </a>
+
+                <button
+                  type="submit"
+                  class="btn btn-save px-4"
+                  [disabled]="!!errorFoto">
+
+                  <i class="bi bi-check2 me-2" aria-hidden="true"></i>
+                  {{ guardando ? 'Guardando…' : 'Guardar producto' }}
+                </button>
+              </div>
+
+            </div>
+          </div>
+
+          <!-- Imagen -->
+          <div class="col-lg-4">
+            <div class="editor-card p-4">
+
+              <h2 class="h5 mb-1">Foto del producto</h2>
+
+              <p class="small text-body-secondary mb-3">
+                Así se verá la imagen en tu carta.
+              </p>
+
+              <div class="photo-preview mb-3">
+                @if (vistaPrevia) {
+                  <img
+                    [src]="vistaPrevia"
+                    alt="Vista previa de la foto del producto"
+                    (error)="vistaPrevia = ''">
+                } @else {
+                  <div class="text-center p-3">
+                    <i class="bi bi-image fs-1" aria-hidden="true"></i>
+
+                    <p class="small mb-0 mt-2">
+                      Tu foto aparecerá aquí
+                    </p>
+                  </div>
+                }
+              </div>
+
+              <label class="upload-box" for="foto">
+                <i
+                  class="bi bi-cloud-arrow-up fs-4"
+                  aria-hidden="true">
+                </i>
+
+                <strong class="d-block mt-1">
+                  {{ vistaPrevia ? 'Cambiar imagen' : 'Seleccionar imagen' }}
+                </strong>
+
+                <span class="small d-block text-body-secondary text-break">
+                  {{ fotoSeleccionada?.name || 'Elige una foto desde tu equipo' }}
+                </span>
+
+                <input
+                  id="foto"
+                  type="file"
+                  accept="image/*"
+                  class="upload-input"
+                  (change)="onFileSelected($event)">
+              </label>
+
+              @if (errorFoto) {
+                <p class="small text-danger mt-2 mb-0" role="alert">
+                  {{ errorFoto }}
+                </p>
+              }
+
+              <p class="photo-tip small mb-0 mt-3">
+                <i class="bi bi-lightbulb me-1" aria-hidden="true"></i>
+                Usa una foto clara y con el plato completo.
+              </p>
+
+            </div>
+          </div>
+
         </div>
-      </form>
-    </div>
+      </fieldset>
+    </form>
+
   </div>
-</div>
+</section>

@@ -1,8 +1,32 @@
-<footer class="footer bg-batan-primary text-center">
-    <div class="container py-3">
-        <p class ="text-white m-0">
-            ©{{autor.anio}} | {{autor.nombre}} {{autor.apellidos}}  Todos los derechos reservados
-        </p>
+<footer class="site-footer">
+  <div class="container">
+    <a class="footer-brand d-inline-block" routerLink="/home" aria-label="Inicio de El Batán">
+      <img src="logo-el-batan-transparente.png" alt="El Batán, restaurante y pollería"
+           width="144" height="96" loading="lazy">
+    </a>
+    <p class="footer-description mt-3 mb-4">
+      El Batán, restaurante y pollería en Tarapoto.
+      Explora nuestra carta y encuentra la ubicación de nuestro local para tu próxima visita.
+    </p>
+    <hr>
+    <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 py-3">
+      <small>Derechos de autor © El Batán {{ anio }}</small>
+      <nav class="d-flex flex-wrap gap-4" aria-label="Enlaces del pie de página">
+        <a routerLink="/home" fragment="sobre-nosotros">Sobre nosotros</a>
+        <a routerLink="/home" fragment="ubicacion">Ubicación</a>
+        @for (red of redesSociales; track red.url) {
+          <a [href]="red.url" target="_blank" rel="noopener noreferrer" [attr.aria-label]="red.nombre">
+            <i [class]="'bi ' + red.icono" aria-hidden="true"></i>
+          </a>
+        }
+      </nav>
     </div>
-
+    @if (libroReclamacionesUrl) {
+      <div class="footer-claims text-center">
+        <a [href]="libroReclamacionesUrl" target="_blank" rel="noopener noreferrer">
+          <i class="bi bi-book me-2 fs-4" aria-hidden="true"></i>Libro de Reclamaciones
+        </a>
+      </div>
+    }
+  </div>
 </footer>
