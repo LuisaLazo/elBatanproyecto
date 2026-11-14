@@ -116,7 +116,7 @@ public class PedidoServiceImpl implements IPedidoService{
     @Transactional(readOnly = true)
     public List<PedidoResponseDTO> listarPorEstado(Estado estado) {
 
-        return pedidoRepository.findByEstado(estado.name())
+        return pedidoRepository.findByEstado(estado)
                 .stream()
                 .map(this::convertToDTO)
                 .toList();

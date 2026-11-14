@@ -5,16 +5,40 @@
         <div class="col-md-4 mb-4">
             <div class="card h-100 shadow-sm">
                 <img [src]="prod.imagen" class="card-img-top" alt="{{prod.nombre}}"
-                style="height: 200px; object-fit: cover;">
+                    style="height: 200px; object-fit: cover;">
                 <div class="card-body">
                     <h5 class="card-title">{{prod.nombre}}</h5>
                     <p class="card-text text-muted">{{prod.descripcion}}</p>
                     <h4 text-batan-primary>S/. {{prod.precio}}</h4>
-                    <button class="btn btn-outline-accent w-100" (click)="agregarAlCarrito(prod)">Añadir al carrito </button>
+                    <button class="btn btn-outline-accent w-100" (click)="agregarAlCarrito(prod)">Añadir al carrito
+                    </button>
                 </div>
             </div>
 
         </div>
         }
     </div>
+
+
+    <section class="mt-5">
+        
+        <h2 class="text-batan-primary mb-4">Encuéntranos aquí:</h2>
+        <div class="card shadow-sm border-0 rounded-4 overflow-hidden">
+            <div class="card-body p-0">
+                <!-- Contenedor responsivo de Bootstrap 5 -->
+                <div class="ratio ratio-16x9">
+                    <iframe
+                        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3964.2443716455887!2d-76.35725198929119!3d-6.490710163432356!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x91ba0c0e540ede27%3A0xc7421a81740913bf!2sEl%20Bat%C3%A1n%20-%20Restaurante%20y%20Poller%C3%ADa!5e0!3m2!1ses-419!2spe!4v1793389196829!5m2!1ses-419!2spe"
+                        width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy"
+                        referrerpolicy="strict-origin-when-cross-origin"></iframe>
+                </div>
+            </div>
+            <div class="card-footer bg-white border-0 py-3 px-4">
+                <h5 class="card-title mb-1 fw-bold text-dark">El Batan</h5>
+                <p class="card-text text-muted mb-0 small">
+                    <i class="bi bi-geo-alt-fill text-danger me-1"></i> Jr. Yurimaguas 320, Tarapoto
+                </p>
+            </div>
+        </div>
+    </section>
 </div>

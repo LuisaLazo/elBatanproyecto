@@ -7,8 +7,8 @@ export interface ItemVentaDTO{
 }
 
 //Pedido
-export interface VentaDTO{
-idPersona:number;
-items: ItemVentaDTO[];
-
+export interface VentaDTO {
+  idPersona: number;
+  direccion: string;
+  items: ItemVentaDTO[];
 }
