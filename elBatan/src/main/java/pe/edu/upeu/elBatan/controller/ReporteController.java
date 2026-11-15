@@ -10,6 +10,8 @@ import pe.edu.upeu.elBatan.dto.ResumenVentasDTO;
 import pe.edu.upeu.elBatan.services.ParticipacionProductoService;
 import pe.edu.upeu.elBatan.services.ReporteService;
 import pe.edu.upeu.elBatan.services.ResumenVentasService;
+import pe.edu.upeu.elBatan.dto.ReporteUsuarioDTO;
+import pe.edu.upeu.elBatan.services.ReporteUsuarioService;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -22,11 +24,13 @@ public class ReporteController {
     private final ReporteService reporteService;
     private final ResumenVentasService resumenVentasService;
     private final ParticipacionProductoService participacionProductoService;
+    private final ReporteUsuarioService reporteUsuarioService;
 
-    public ReporteController(ReporteService reporteService, ResumenVentasService resumenVentasService, ParticipacionProductoService participacionProductoService) {
+    public ReporteController(ReporteService reporteService, ResumenVentasService resumenVentasService, ParticipacionProductoService participacionProductoService, ReporteUsuarioService reporteUsuarioService) {
         this.reporteService = reporteService;
         this.resumenVentasService = resumenVentasService;
         this.participacionProductoService = participacionProductoService;
+        this.reporteUsuarioService = reporteUsuarioService;
     }
 
     @GetMapping("/ventas")
@@ -50,5 +54,10 @@ public class ReporteController {
     @GetMapping("/participacion-productos")
     public ResponseEntity<List<ParticipacionProductoDTO>> listarParticipacionProductos() {
         return ResponseEntity.ok(participacionProductoService.listar());
+    }
+
+    @GetMapping("/usuarios")
+    public ResponseEntity<List<ReporteUsuarioDTO>> listarUsuarios() {
+        return ResponseEntity.ok(reporteUsuarioService.listar());
     }
 }

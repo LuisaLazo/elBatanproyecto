@@ -6,6 +6,7 @@ import { Observable } from 'rxjs';
 import { ReporteVentaDTO } from '../Interfaces/reporte-venta.interface';
 import { ResumenVentasDTO } from '../Interfaces/resumen-ventas.interface';
 import { ParticipacionProductoDTO } from '../Interfaces/participacion-producto';
+import { ReporteUsuarioDTO } from '../Interfaces/reporte-usuario.interface';
 
 @Injectable({
   providedIn: 'root'
@@ -41,4 +42,10 @@ export class ReporteService {
       '/api/v1/reportes/participacion-productos'
     );
   }
+  
+  listarUsuarios(): Observable<ReporteUsuarioDTO[]> {
+  return this.http.get<ReporteUsuarioDTO[]>(
+    '/api/v1/reportes/usuarios'
+  );
+}
 }

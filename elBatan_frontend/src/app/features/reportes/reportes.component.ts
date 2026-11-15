@@ -8,6 +8,7 @@ import { ResumenVentasDTO } from '../../core/Interfaces/resumen-ventas.interface
 import { PedidoService } from '../../core/services/pedido.service';
 import { AlertService } from '../../core/services/alert.service';
 import { ParticipacionProductoDTO } from '../../core/Interfaces/participacion-producto';
+import { ReporteUsuarioDTO } from '../../core/Interfaces/reporte-usuario.interface';
 
 @Component({
   selector: 'app-reportes',
@@ -19,10 +20,11 @@ import { ParticipacionProductoDTO } from '../../core/Interfaces/participacion-pr
 export class ReportesComponent implements OnInit {
 
   ngOnInit(): void {
-    this.cargar();
-    this.cargarResumen();
-    this.cargarParticipacionProductos();
-  }
+  this.cargar();
+  this.cargarResumen();
+  this.cargarParticipacionProductos();
+  this.cargarUsuarios();
+}
 
   private reporteService = inject(ReporteService);
 
@@ -41,7 +43,12 @@ export class ReportesComponent implements OnInit {
 
   cargandoResumen = false;
   errorResumen = '';
-  
+
+  usuariosReporte: ReporteUsuarioDTO[] = [];
+
+  cargandoUsuarios = false;
+  errorUsuarios = '';
+  busquedaUsuarios = '';
 
   cargar(): void {
     this.cargando = true;
@@ -160,53 +167,93 @@ export class ReportesComponent implements OnInit {
 
   //reporte participación productos
 
-participacionProductos: ParticipacionProductoDTO[] = [];
+  participacionProductos: ParticipacionProductoDTO[] = [];
 
-cargandoParticipacion = false;
-errorParticipacion = '';
+  cargandoParticipacion = false;
+  errorParticipacion = '';
 
-get ingresosProductos(): number {
-  return this.participacionProductos.reduce(
-    (total, producto) =>
-      total + producto.ingresosGenerados,
-    0
-  );
-}
+  get ingresosProductos(): number {
+    return this.participacionProductos.reduce(
+      (total, producto) =>
+        total + producto.ingresosGenerados,
+      0
+    );
+  }
 
-get unidadesProductos(): number {
-  return this.participacionProductos.reduce(
-    (total, producto) =>
-      total + producto.unidadesVendidas,
-    0
-  );
-}
+  get unidadesProductos(): number {
+    return this.participacionProductos.reduce(
+      (total, producto) =>
+        total + producto.unidadesVendidas,
+      0
+    );
+  }
 
-get cantidadProductosVendidos(): number {
-  return this.participacionProductos.length;
-}
+  get cantidadProductosVendidos(): number {
+    return this.participacionProductos.length;
+  }
 
-cargarParticipacionProductos(): void {
-  this.cargandoParticipacion = true;
-  this.errorParticipacion = '';
+  cargarParticipacionProductos(): void {
+    this.cargandoParticipacion = true;
+    this.errorParticipacion = '';
 
-  this.reporteService.obtenerParticipacionProductos()
-    .subscribe({
+    this.reporteService.obtenerParticipacionProductos()
+      .subscribe({
+        next: (datos) => {
+          this.participacionProductos = datos;
+          this.cargandoParticipacion = false;
+        },
+        error: (error) => {
+          console.error(
+            'Error al obtener participación de productos:',
+            error
+          );
+
+          this.errorParticipacion =
+            'No se pudo cargar la participación de productos.';
+
+          this.cargandoParticipacion = false;
+        }
+      });
+  }
+
+
+  cargarUsuarios(): void {
+    this.cargandoUsuarios = true;
+    this.errorUsuarios = '';
+
+    this.reporteService.listarUsuarios().subscribe({
       next: (datos) => {
-        this.participacionProductos = datos;
-        this.cargandoParticipacion = false;
+        this.usuariosReporte = datos;
+        this.cargandoUsuarios = false;
       },
-      error: (error) => {
-        console.error(
-          'Error al obtener participación de productos:',
-          error
-        );
-
-        this.errorParticipacion =
-          'No se pudo cargar la participación de productos.';
-
-        this.cargandoParticipacion = false;
+      error: (err) => {
+        console.error('Error cargando usuarios:', err);
+        this.errorUsuarios =
+          'No se pudo cargar el reporte de usuarios.';
+        this.cargandoUsuarios = false;
       }
     });
+  }
+
+
+get usuariosFiltrados(): ReporteUsuarioDTO[] {
+
+  const texto = this.busquedaUsuarios.trim().toLowerCase();
+
+  return this.usuariosReporte.filter(u =>
+    !texto ||
+    [
+      u.nombre,
+      u.usuario,
+      u.rol
+    ].some(valor =>
+      (valor || '').toLowerCase().includes(texto)
+    )
+  );
+}
+
+get totalUsuarios(): number {
+  return this.usuariosReporte.length;
 }
 
 

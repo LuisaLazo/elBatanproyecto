@@ -572,4 +572,202 @@
 
     </div>
 
+
+<!-- ====================================== -->
+<!-- REPORTE DE USUARIOS -->
+<!-- ====================================== -->
+
+<div class="card shadow-sm border-0 mt-5 mb-4">
+
+    <div class="card-body">
+
+        <!-- TÍTULO -->
+        <div class="d-flex justify-content-between align-items-center mb-4">
+
+            <div>
+                <h5 class="mb-1">
+                    <i class="bi bi-people-fill text-success"></i>
+                    Reporte de usuarios registrados
+                </h5>
+
+                <p class="text-muted mb-0">
+                    Consulta los usuarios registrados
+                    y los roles asignados.
+                </p>
+            </div>
+
+            <button
+                class="btn btn-outline-success"
+                (click)="cargarUsuarios()"
+                [disabled]="cargandoUsuarios">
+
+                <i class="bi bi-arrow-clockwise"></i>
+                Actualizar
+
+            </button>
+
+        </div>
+
+        <!-- INDICADOR -->
+        <div class="row g-3 mb-4">
+
+            <div class="col-md-4">
+
+                <div class="card bg-light border-0">
+
+                    <div class="card-body">
+
+                        <p class="text-muted mb-2">
+                            <i class="bi bi-person-check"></i>
+                            Total de registros
+                        </p>
+
+                        <h3 class="text-success fw-bold mb-0">
+                            {{ totalUsuarios }}
+                        </h3>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- BUSCADOR -->
+        <div class="mb-3">
+
+            <input
+                type="text"
+                class="form-control"
+                [(ngModel)]="busquedaUsuarios"
+                placeholder="Buscar por nombre, apellido, usuario o rol">
+
+        </div>
+
+        <!-- CARGANDO -->
+        @if (cargandoUsuarios) {
+
+            <div class="text-center py-4">
+
+                <div class="spinner-border text-success"
+                     role="status">
+                </div>
+
+                <p class="text-muted mt-2">
+                    Consultando usuarios en Oracle...
+                </p>
+
+            </div>
+
+        }
+
+        <!-- ERROR -->
+        @if (errorUsuarios) {
+
+            <div class="alert alert-danger">
+                <i class="bi bi-exclamation-triangle"></i>
+                {{ errorUsuarios }}
+            </div>
+
+        }
+
+        <!-- TABLA -->
+        @if (!cargandoUsuarios && !errorUsuarios) {
+
+            <div class="table-responsive">
+
+                <table class="table table-striped table-hover align-middle mb-0">
+
+                    <thead class="table-success">
+
+                        <tr>
+                            <th>ID Usuario</th>
+                            <th>Nombre</th>
+                            
+                            <th>Usuario</th>
+                            <th>ID Rol</th>
+                            <th>Rol</th>
+                        </tr>
+
+                    </thead>
+
+                    <tbody>
+
+                        @for (u of usuariosFiltrados; track $index) {
+
+                            <tr>
+
+                                <td>
+                                    {{ u.idUsuario }}
+                                </td>
+
+                                <td>
+                                    {{ u.nombre }}
+                                </td>
+
+                              
+                                <td class="fw-semibold">
+                                    {{ u.usuario }}
+                                </td>
+
+                                <td>
+                                    {{ u.idRol }}
+                                </td>
+
+                                <td>
+
+                                    @if (u.rol === 'ADMIN') {
+
+                                        <span class="badge bg-danger">
+                                            ADMIN
+                                        </span>
+
+                                    } @else if (u.rol === 'REPARTIDOR') {
+
+                                        <span class="badge bg-warning text-dark">
+                                            REPARTIDOR
+                                        </span>
+
+                                    } @else {
+
+                                        <span class="badge bg-success">
+                                            {{ u.rol }}
+                                        </span>
+
+                                    }
+
+                                </td>
+
+                            </tr>
+
+                        } @empty {
+
+                            <tr>
+
+                                <td colspan="6"
+                                    class="text-center text-muted py-4">
+
+                                    <i class="bi bi-inbox"></i>
+                                    No se encontraron usuarios.
+
+                                </td>
+
+                            </tr>
+
+                        }
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        }
+
+    </div>
+
+</div>
+
+
 </div>
