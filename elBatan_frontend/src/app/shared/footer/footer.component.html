@@ -4,23 +4,38 @@
       <img src="logo-el-batan-transparente.png" alt="El Batán, restaurante y pollería"
            width="144" height="96" loading="lazy">
     </a>
+
     <p class="footer-description mt-3 mb-4">
       El Batán, restaurante y pollería en Tarapoto.
       Explora nuestra carta y encuentra la ubicación de nuestro local para tu próxima visita.
     </p>
+
     <hr>
+
     <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 py-3">
       <small>Derechos de autor © El Batán {{ anio }}</small>
+
       <nav class="d-flex flex-wrap gap-4" aria-label="Enlaces del pie de página">
         <a routerLink="/home" fragment="sobre-nosotros">Sobre nosotros</a>
         <a routerLink="/home" fragment="ubicacion">Ubicación</a>
+
+        <a href="https://www.facebook.com/ElBatanPolleria"
+           target="_blank"
+           rel="noopener noreferrer"
+           aria-label="Facebook de El Batán">
+          <i class="bi bi-facebook me-1" aria-hidden="true"></i>
+          Facebook
+        </a>
+
         @for (red of redesSociales; track red.url) {
-          <a [href]="red.url" target="_blank" rel="noopener noreferrer" [attr.aria-label]="red.nombre">
+          <a [href]="red.url" target="_blank" rel="noopener noreferrer"
+             [attr.aria-label]="red.nombre">
             <i [class]="'bi ' + red.icono" aria-hidden="true"></i>
           </a>
         }
       </nav>
     </div>
+
     @if (libroReclamacionesUrl) {
       <div class="footer-claims text-center">
         <a [href]="libroReclamacionesUrl" target="_blank" rel="noopener noreferrer">

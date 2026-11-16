@@ -1,5 +1,6 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, DestroyRef, inject, OnInit } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { RouterLink } from '@angular/router';
 import { finalize } from 'rxjs';
 import { ProductoService } from '../../../core/services/producto.service';
@@ -16,6 +17,7 @@ import { AlertService } from '../../../core/services/alert.service';
 export class ProductListComponent implements OnInit {
   private productService = inject(ProductoService);
   private alertService = inject(AlertService);
+  private readonly destroyRef = inject(DestroyRef);
 
   products: Producto[] = [];
   busqueda = '';
@@ -35,6 +37,13 @@ export class ProductListComponent implements OnInit {
 
   ngOnInit(): void {
     this.listProduct();
+
+    this.productService.observarProductos()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(productos => {
+        this.products = productos;
+        this.estado = 'listo';
+      });
   }
 
   listProduct(): void {
@@ -59,12 +68,15 @@ export class ProductListComponent implements OnInit {
 
   async eliminar(id: number): Promise<void> {
     if (this.eliminandoId !== null) return;
+
     this.eliminandoId = id;
     const confirmado = await this.alertService.confirm('¿Deseas eliminar este producto?');
+
     if (!confirmado) {
       this.eliminandoId = null;
       return;
     }
+
     this.productService.deleteProduct(id).pipe(
       finalize(() => this.eliminandoId = null)
     ).subscribe({

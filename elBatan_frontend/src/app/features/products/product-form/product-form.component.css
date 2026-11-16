@@ -125,3 +125,13 @@
 .photo-tip {
   color: #776043;
 }
+
+.precio-input {
+  appearance: textfield;
+}
+
+.precio-input::-webkit-inner-spin-button,
+.precio-input::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}

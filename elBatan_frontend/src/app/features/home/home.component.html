@@ -1,6 +1,8 @@
 <h1 class="visually-hidden">El Batán</h1>
+
 <div class="cover">
-  <img src="pollo-a-la-brasa.webp" alt="Pollo a la brasa con papas fritas y ensalada"
+  <img src="pollo-a-la-brasa.webp"
+       alt="Pollo a la brasa con papas fritas y ensalada"
        width="1180" height="843" fetchpriority="high">
 </div>
 
@@ -13,7 +15,9 @@
     } @else if (estado === 'error') {
       <div class="alert alert-warning d-flex flex-wrap align-items-center justify-content-between gap-3 mb-0" role="alert">
         <span>No pudimos cargar la carta. Verifica que el servidor esté funcionando.</span>
-        <button type="button" class="btn btn-outline-dark btn-sm" (click)="cargarProductos()">Reintentar</button>
+        <button type="button" class="btn btn-outline-dark btn-sm" (click)="cargarProductos()">
+          Reintentar
+        </button>
       </div>
     } @else if (productos.length === 0) {
       <p class="text-body-secondary mb-0">Todavía no hay productos en la carta.</p>
@@ -22,13 +26,21 @@
         @for (producto of productos; track producto.id) {
           <div class="col">
             <article class="card h-100 overflow-hidden shadow-sm">
-              <img class="card-img-top product-photo" [src]="producto.imagen || 'producto-sin-foto.svg'"
+              <img class="card-img-top product-photo"
+                   [src]="producto.imagen || 'producto-sin-foto.svg'"
                    alt="" loading="lazy" (error)="mostrarImagenAlternativa($event)">
+
               <div class="card-body d-flex flex-column gap-2 p-4">
                 <h3 class="h5 card-title mb-0">{{ producto.nombre }}</h3>
                 <p class="card-text text-body-secondary mb-2">{{ producto.descripcion }}</p>
-                <p class="text-batan-primary fw-bold fs-5 mt-auto mb-2">S/ {{ producto.precio | number:'1.2-2' }}</p>
-                <button type="button" class="btn btn-batan w-100" [disabled]="producto.stock <= 0"
+                <p class="text-batan-primary fw-bold fs-5 mt-auto mb-2">
+                  S/ {{ producto.precio | number:'1.2-2' }}
+                </p>
+                <p class="text-body-secondary mb-2">
+                  Disponibles: <strong>{{ producto.stock }}</strong>
+                </p>
+                <button type="button" class="btn btn-batan w-100"
+                        [disabled]="producto.stock <= 0"
                         (click)="agregarAlCarrito(producto)">
                   {{ producto.stock <= 0 ? 'Agotado' : 'Añadir al carrito' }}
                 </button>
@@ -41,7 +53,6 @@
   </div>
 </section>
 
-
 <section id="sobre-nosotros" class="about-section" aria-labelledby="sobre-nosotros-title">
   <div class="container">
     <div class="row align-items-center g-4 g-lg-5">
@@ -50,16 +61,48 @@
              alt="Pollo a la brasa acompañado de papas fritas y ensalada"
              width="1180" height="843" loading="lazy">
       </div>
+
       <div class="col-lg-6">
         <p class="section-eyebrow mb-2">Restaurante y pollería</p>
-        <h2 id="sobre-nosotros-title" class="section-title text-batan-primary mb-4">Sobre nosotros</h2>
-        <!-- Reemplazar este párrafo cuando el restaurante proporcione su historia oficial. -->
-        <p class="about-copy mb-4">
-          El Batán es un restaurante y pollería en Tarapoto. Conoce nuestra carta
-          y encuentra la ubicación de nuestro local para tu próxima visita.
+        <h2 id="sobre-nosotros-title" class="section-title text-batan-primary mb-4">
+          Sobre nosotros
+        </h2>
+
+        <h3 class="h4 text-batan-primary mb-3">
+          Más de 30 años compartiendo tradición y buen sabor
+        </h3>
+
+        <p class="about-copy mb-3">
+          En <em>Restaurante El Batán</em>, nuestra historia comenzó hace más de tres
+          décadas con el propósito de ofrecer a nuestros clientes una experiencia
+          gastronómica agradable, basada en el buen sabor, la dedicación y una
+          atención cercana. A lo largo de los años, hemos construido una trayectoria
+          que nos permite seguir creciendo y conservando aquello que nos identifica:
+          el compromiso con cada persona que nos visita.
         </p>
+
+        <p class="about-copy mb-3">
+          Nuestra esencia se refleja en cada preparación y en el esfuerzo diario por
+          brindar un servicio de calidad, manteniendo viva una tradición que forma
+          parte de nuestra identidad. Hoy continuamos recibiendo a familias, amigos y
+          visitantes que encuentran en El Batán un espacio para compartir y disfrutar
+          de buenos momentos.
+        </p>
+
+        <p class="about-copy mb-3">
+          Seguimos trabajando con la misma dedicación que nos acompaña desde nuestros
+          inicios, agradecidos por la confianza de quienes nos eligen y motivados por
+          seguir siendo parte de sus mejores experiencias.
+        </p>
+
+        <p class="text-batan-primary fw-semibold fst-italic mb-4">
+          Restaurante El Batán: más de 30 años de tradición, sabor y compromiso contigo.
+        </p>
+
         <div class="d-flex flex-wrap gap-3">
-          <a class="btn btn-batan px-4 py-2" routerLink="/home" fragment="carta">Ver nuestra carta</a>
+          <a class="btn btn-batan px-4 py-2" routerLink="/home" fragment="carta">
+            Ver nuestra carta
+          </a>
           <a class="btn btn-outline-dark px-4 py-2" routerLink="/home" fragment="ubicacion">
             <i class="bi bi-geo-alt me-2" aria-hidden="true"></i>Cómo llegar
           </a>
@@ -74,16 +117,36 @@
     <div class="row align-items-end g-3 mb-4">
       <div class="col-md-8">
         <p class="section-eyebrow mb-2">Te esperamos en El Batán</p>
-        <h2 id="ubicacion-title" class="section-title text-batan-primary mb-2">Encuéntranos</h2>
-        <p class="text-body-secondary mb-0">Consulta nuestra ubicación y planea tu visita.</p>
+        <h2 id="ubicacion-title" class="section-title text-batan-primary mb-2">
+          Visítanos
+        </h2>
       </div>
+
       <div class="col-md-4 text-md-end">
         <a class="btn btn-outline-dark px-4 py-2"
-           href="https://www.google.com/maps?cid=14358067705310417855" target="_blank" rel="noopener noreferrer">
+           href="https://www.google.com/maps?cid=14358067705310417855"
+           target="_blank" rel="noopener noreferrer">
           Abrir en Google Maps<i class="bi bi-arrow-up-right ms-2" aria-hidden="true"></i>
         </a>
       </div>
     </div>
+
+    <ul class="list-unstyled d-grid gap-2 mb-4">
+      <li>
+        <strong>Horario de atención:</strong> Todos los días, de 12:00 p. m. a 10:30 p. m.
+      </li>
+      <li>
+        <strong>Dirección:</strong> Jr. Yurimaguas 320, La Banda de Shilcayo, San Martín.
+      </li>
+      <li>
+        <strong>Servicios:</strong> Atención en restaurante, delivery y take out.
+      </li>
+      <li>
+        <strong>Pedidos y consultas:</strong>
+        <a class="ms-2" href="tel:+51900407548">900 407 548</a>.
+      </li>
+    </ul>
+
     <div class="map-frame">
       <iframe
         src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3964.2443716455887!2d-76.35725198929119!3d-6.490710163432356!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x91ba0c0e540ede27%3A0xc7421a81740913bf!2sEl%20Bat%C3%A1n%20-%20Restaurante%20y%20Poller%C3%ADa!5e0!3m2!1ses-419!2spe!4v1793389196829!5m2!1ses-419!2spe"

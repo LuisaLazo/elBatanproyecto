@@ -28,7 +28,28 @@
         <li class="nav-item"><a class="nav-link" routerLink="/home" fragment="carta">Nuestra carta</a></li>
         <li class="nav-item"><a class="nav-link" routerLink="/home" fragment="sobre-nosotros">Sobre nosotros</a></li>
         <li class="nav-item"><a class="nav-link" routerLink="/home" fragment="ubicacion">Ubicación</a></li>
-        <li class="nav-item"><a class="nav-link" routerLink="/productos">Gestión de productos</a></li>
+        <li class="nav-item"><a class="nav-link" routerLink="/mis-pedidos">Mis pedidos</a></li>
+
+        @if (esAdmin) {
+          <li class="nav-item">
+            <a class="nav-link" routerLink="/productos">Gestión de productos</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" routerLink="/admin/pedidos">Gestión de pedidos</a>
+          </li>
+        }
+
+        @if (sesionIniciada) {
+          <li class="nav-item">
+            <button type="button" class="nav-link" (click)="cerrarSesion()">
+              Cerrar sesión
+            </button>
+          </li>
+        } @else {
+          <li class="nav-item">
+            <a class="nav-link" routerLink="/login">Iniciar sesión</a>
+          </li>
+        }
       </ul>
     </div>
   </div>

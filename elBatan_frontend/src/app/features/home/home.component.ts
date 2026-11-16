@@ -1,5 +1,6 @@
 import { DecimalPipe } from '@angular/common';
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, DestroyRef, inject, OnInit } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { RouterLink } from '@angular/router';
 import { ProductoService } from '../../core/services/producto.service';
 import { Producto } from '../../core/Interfaces/producto.interface';
@@ -15,18 +16,26 @@ import { CartService } from '../../core/services/cart.service';
 export class HomeComponent implements OnInit {
   private productoService = inject(ProductoService);
   private cartService = inject(CartService);
+  private readonly destroyRef = inject(DestroyRef);
 
   productos: Producto[] = [];
   estado: 'cargando' | 'listo' | 'error' = 'cargando';
 
   ngOnInit(): void {
     this.cargarProductos();
+
+    this.productoService.observarProductos()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(productos => {
+        this.productos = productos;
+        this.estado = 'listo';
+      });
   }
 
   cargarProductos(): void {
     this.estado = 'cargando';
     this.productoService.getProductos().subscribe({
-      next: (productos) => {
+      next: productos => {
         this.productos = productos;
         this.estado = 'listo';
       },

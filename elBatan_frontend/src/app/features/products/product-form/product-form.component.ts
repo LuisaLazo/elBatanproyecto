@@ -49,7 +49,10 @@ export class ProductFormComponent implements OnInit, OnDestroy {
       ]
     ],
     descripcion: ['', Validators.maxLength(255)],
-    precio: [0, [Validators.required, Validators.min(0.1)]],
+    precio: this.fb.control<number | null>(null, [
+      Validators.required,
+      Validators.min(0.10)
+    ]),
     stock: [
       0,
       [
