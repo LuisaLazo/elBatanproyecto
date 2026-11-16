@@ -8,12 +8,16 @@ import java.util.List;
 import java.util.Optional;
 
 public interface IPedidoService {
-    PedidoResponseDTO realizarPedido (VentaDTO dto);
+    PedidoResponseDTO realizarPedido(Long idPersona, VentaDTO dto);
+
     List<PedidoResponseDTO> listarTodo();
+
+    List<PedidoResponseDTO> listarPorCliente(Long idPersona);
 
     Optional<PedidoResponseDTO> buscarPorId(Long id);
 
     List<PedidoResponseDTO> listarPorEstado(Estado estado);
+
     Optional<PedidoResponseDTO> actualizarEstado(Long id, String estado);
 
     boolean eliminar(Long id);
