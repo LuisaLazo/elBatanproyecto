@@ -73,7 +73,7 @@ export class CarritoComponent {
         this.cartService.vaciarCarrito();
 
         this.alertService.success(
-          `Tu pedido #${respuesta.idPedido} está en preparación.`,
+          `Tu pedido ${respuesta.codigoPedido} está en preparación.`,
           'Pedido confirmado'
         );
       },
@@ -81,10 +81,8 @@ export class CarritoComponent {
         this.enviando = false;
 
         if (respuesta.status === 401) {
-          localStorage.removeItem('elBatan.token');
-          localStorage.removeItem('elBatan.roles');
           this.alertService.error(
-            'Tu sesión venció. Pulsa Confirmar pedido para iniciar sesión otra vez.'
+            'Inicia sesión de nuevo para continuar con tu pedido.'
           );
           return;
         }

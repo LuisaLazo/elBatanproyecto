@@ -1,5 +1,6 @@
 import { Component, inject } from '@angular/core';
 import { Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
+import { AuthService } from '../../core/services/auth.service';
 
 @Component({
   selector: 'app-admin-layout',
@@ -12,12 +13,11 @@ import { Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/rou
           <h1 class="h5 mb-4">El Batán · Administración</h1>
 
           <nav class="nav nav-pills flex-column gap-2" aria-label="Administración">
-            <form (submit)="$event.preventDefault(); buscarPedido(numeroPedido.value)">
-              <label for="buscarPedido" class="form-label">Número de pedido</label>
+            <form (submit)="$event.preventDefault(); buscarPedido(codigoPedido.value)">
+              <label for="buscarPedido" class="form-label">Código de pedido</label>
               <div class="input-group">
-                <input #numeroPedido id="buscarPedido" type="search"
-                       class="form-control" inputmode="numeric"
-                       pattern="[0-9]+" placeholder="Ej. 3">
+                <input #codigoPedido id="buscarPedido" type="search"
+                       class="form-control" placeholder="Ej. BAT-23">
                 <button type="submit" class="btn btn-light">Buscar</button>
               </div>
             </form>
@@ -25,7 +25,7 @@ import { Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/rou
             <a class="nav-link text-white" routerLink="/admin/pedidos"
                routerLinkActive="bg-white bg-opacity-10 fw-semibold"
                ariaCurrentWhenActive="page"
-               (click)="numeroPedido.value = ''">
+               (click)="codigoPedido.value = ''">
               Ver todos los pedidos
             </a>
 
@@ -53,9 +53,10 @@ import { Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/rou
 })
 export class AdminLayoutComponent {
   private readonly router = inject(Router);
+  private readonly authService = inject(AuthService);
 
-  buscarPedido(numero: string): void {
-    const pedido = numero.trim();
+  buscarPedido(codigo: string): void {
+    const pedido = codigo.trim().toUpperCase();
 
     void this.router.navigate(['/admin/pedidos'], {
       queryParams: pedido ? { pedido } : {}
@@ -63,8 +64,7 @@ export class AdminLayoutComponent {
   }
 
   cerrarSesion(): void {
-    localStorage.removeItem('elBatan.token');
-    localStorage.removeItem('elBatan.roles');
+    this.authService.cerrarSesion();
     void this.router.navigate(['/login']);
   }
 }

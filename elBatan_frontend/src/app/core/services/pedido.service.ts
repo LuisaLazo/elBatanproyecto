@@ -4,10 +4,12 @@ import { VentaDTO } from '../Interfaces/pedido.interface';
 
 interface PedidoCreado {
   idPedido: number;
+  codigoPedido: string;
 }
 
 export interface PedidoHistorial {
   idPedido: number;
+  codigoPedido: string;
   cliente: string;
   estado: string;
   total: number;

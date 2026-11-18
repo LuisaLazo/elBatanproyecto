@@ -1,12 +1,7 @@
-import { HttpClient } from '@angular/common/http';
 import { Component, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
-
-interface LoginResponse {
-  token: string;
-  roles: string[];
-}
+import { AuthService } from '../../core/services/auth.service';
 
 @Component({
   selector: 'app-login',
@@ -156,7 +151,7 @@ interface LoginResponse {
   `]
 })
 export class LoginComponent {
-  private readonly http = inject(HttpClient);
+  private readonly authService = inject(AuthService);
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
 
@@ -166,28 +161,28 @@ export class LoginComponent {
   cargando = false;
 
   iniciarSesion(): void {
-    if (this.cargando || !this.usuario.trim() || !this.password) {
+    const usuario = this.usuario.trim();
+
+    if (this.cargando || !usuario || !this.password) {
       return;
     }
 
     this.error = '';
     this.cargando = true;
 
-    this.http.post<LoginResponse>('/elBatan/api/v1/auth/login', {
-      usuario: this.usuario.trim(),
-      password: this.password
-    }).subscribe({
+    this.authService.login({ usuario, password: this.password }).subscribe({
       next: ({ token, roles }) => {
         this.cargando = false;
-        const vieneDelCarrito = this.route.snapshot.queryParamMap.get('destino') === 'carrito';
+
+        const vieneDelCarrito =
+          this.route.snapshot.queryParamMap.get('destino') === 'carrito';
 
         if (vieneDelCarrito && !roles.includes('CLIENTE')) {
           this.error = 'Usa una cuenta con rol CLIENTE para hacer el pedido.';
           return;
         }
 
-        localStorage.setItem('elBatan.token', token);
-        localStorage.setItem('elBatan.roles', roles.join(','));
+        this.authService.iniciarSesion(token, roles);
 
         const destino = vieneDelCarrito
           ? '/carrito'

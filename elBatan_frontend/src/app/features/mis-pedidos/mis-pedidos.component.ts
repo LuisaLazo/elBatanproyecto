@@ -16,15 +16,15 @@ import {
       <div class="pedidos-toolbar">
         <div class="pedido-busqueda">
           <label for="buscarMiPedido" class="form-label">
-            Buscar por número de pedido
+            Buscar por código de pedido
           </label>
           <div class="input-group">
             <span class="input-group-text bg-white" aria-hidden="true">
               <i class="bi bi-search"></i>
             </span>
             <input #buscador id="buscarMiPedido" type="search"
-                   class="form-control" inputmode="numeric" placeholder="Ej. 12"
-                   (input)="numeroBuscado = buscador.value.trim()">
+                   class="form-control" placeholder="Ej. BAT-23"
+                   (input)="codigoBuscado = buscador.value.trim().toUpperCase()">
           </div>
         </div>
 
@@ -58,7 +58,7 @@ import {
           @for (pedido of pedidosFiltrados; track pedido.idPedido) {
             <article class="pedido-card">
               <div class="pedido-card-header">
-                <h2>Pedido #{{ pedido.idPedido }}</h2>
+                <h2>Pedido {{ pedido.codigoPedido }}</h2>
                 <span class="pedido-estado" [attr.data-estado]="pedido.estado">
                   {{ estados[pedido.estado] ?? pedido.estado }}
                 </span>
@@ -95,7 +95,7 @@ import {
             </article>
           } @empty {
             <p class="pedido-mensaje" role="status">
-              {{ (numeroBuscado || fechaSeleccionada)
+              {{ (codigoBuscado || fechaSeleccionada)
                 ? 'No hay pedidos que coincidan con los filtros.'
                 : 'Todavía no tienes pedidos.' }}
             </p>
@@ -270,7 +270,7 @@ export class MisPedidosComponent implements OnInit {
   private readonly pedidoService = inject(PedidoService);
 
   pedidos: PedidoHistorial[] = [];
-  numeroBuscado = '';
+  codigoBuscado = '';
   fechaSeleccionada = '';
   cargando = false;
   error = '';
@@ -283,15 +283,15 @@ export class MisPedidosComponent implements OnInit {
   };
 
   get pedidosFiltrados(): PedidoHistorial[] {
-    const { numeroBuscado, fechaSeleccionada } = this;
+    const { codigoBuscado, fechaSeleccionada } = this;
 
     return this.pedidos.filter(pedido => {
-      const coincideNumero =
-        !numeroBuscado || String(pedido.idPedido) === numeroBuscado;
+      const coincideCodigo =
+        !codigoBuscado || pedido.codigoPedido === codigoBuscado;
       const coincideFecha =
         !fechaSeleccionada || pedido.fecha?.slice(0, 10) === fechaSeleccionada;
 
-      return coincideNumero && coincideFecha;
+      return coincideCodigo && coincideFecha;
     });
   }
 

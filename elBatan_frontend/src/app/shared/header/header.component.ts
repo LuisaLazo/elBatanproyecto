@@ -1,5 +1,7 @@
 import { Component, inject } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { Router, RouterLink } from '@angular/router';
+import { AuthService } from '../../core/services/auth.service';
 import { CartService } from '../../core/services/cart.service';
 
 @Component({
@@ -12,9 +14,14 @@ import { CartService } from '../../core/services/cart.service';
 export class HeaderComponent {
   readonly cartService = inject(CartService);
   private readonly router = inject(Router);
+  private readonly authService = inject(AuthService);
+
+  private readonly estadoSesion = toSignal(this.authService.isLoggedIn$, {
+    requireSync: true
+  });
 
   get sesionIniciada(): boolean {
-    return Boolean(localStorage.getItem('elBatan.token'));
+    return this.estadoSesion();
   }
 
   get esAdmin(): boolean {
@@ -23,8 +30,7 @@ export class HeaderComponent {
   }
 
   cerrarSesion(): void {
-    localStorage.removeItem('elBatan.token');
-    localStorage.removeItem('elBatan.roles');
+    this.authService.cerrarSesion();
     void this.router.navigate(['/home']);
   }
 }
