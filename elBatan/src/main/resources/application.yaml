@@ -4,10 +4,10 @@ spring:
     name: elBatan
 
   datasource:
-    url: jdbc:oracle:thin:@localhost:1521/XE
-    username: US_elBatan
-    password: admin123
-    driver-class-name: oracle.jdbc.OracleDriver
+    url: jdbc:mysql://localhost:3306/elBatanLP2?useSSL=false&serverTimezone=America/Lima&allowPublicKeyRetrieval=true
+    username: root
+    password: jeyner
+    driver-class-name: com.mysql.cj.jdbc.Driver
 
   jpa:
     hibernate:
@@ -15,8 +15,7 @@ spring:
     show-sql: true
     properties:
       hibernate:
-        default_schema: elBatanLP2
-        dialect: org.hibernate.dialect.OracleDialect
+        dialect: org.hibernate.dialect.MySQLDialect
         format_sql: true
 
 server:
@@ -26,3 +25,8 @@ server:
 
 storage:
   location: "images"
+
+reniec:
+  api:
+    url: https://api.factiliza.com/v1/dni/info
+    token: ${RENIEC_TOKEN:}
