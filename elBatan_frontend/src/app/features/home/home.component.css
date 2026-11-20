@@ -1,0 +1,144 @@
+/* Imagen principal */
+.cover {
+  display: flex;
+  justify-content: center;
+  padding: 24px 16px;
+  background: #f4f1ea;
+}
+
+.cover img {
+  display: block;
+  width: auto;
+  max-width: 100%;
+  height: auto;
+  max-height: 65vh;
+  object-fit: contain;
+  object-position: center;
+  border-radius: 16px;
+  box-shadow: 0 8px 24px rgb(0 0 0 / 12%);
+}
+
+/* Nuestra carta */
+.menu {
+  padding-block: clamp(2rem, 5vw, 6rem);
+}
+
+.product-photo {
+  width: 100%;
+  height: auto;
+  aspect-ratio: 16 / 10;
+  object-fit: cover;
+  background: #f4f1ea;
+}
+
+/* Botones verdes */
+.btn-batan {
+  --bs-btn-color: #ffffff;
+  --bs-btn-bg: var(--color-primario);
+  --bs-btn-border-color: var(--color-primario);
+
+  --bs-btn-hover-color: #ffffff;
+  --bs-btn-hover-bg: #23432b;
+  --bs-btn-hover-border-color: #23432b;
+
+  --bs-btn-active-color: #ffffff;
+  --bs-btn-active-bg: #1b3522;
+  --bs-btn-active-border-color: #1b3522;
+
+  --bs-btn-disabled-color: #495057;
+  --bs-btn-disabled-bg: #e9ecef;
+  --bs-btn-disabled-border-color: #e9ecef;
+}
+
+/* Secciones inferiores */
+.about-section,
+.location-section {
+  padding-block: clamp(3rem, 6vw, 6rem);
+  scroll-margin-top: 24px;
+}
+
+.about-section {
+  background: #f4f1ea;
+}
+
+/* Texto pequeño encima de los títulos */
+.section-eyebrow {
+  color: #7b441d;
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+/* Títulos de las secciones */
+.section-title {
+  font-family: Georgia, serif;
+  font-size: clamp(2rem, 3.3vw, 3rem);
+}
+
+/* Imagen de Sobre nosotros */
+.about-photo {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: auto;
+  object-fit: contain;
+  object-position: center;
+  border-radius: 16px;
+  box-shadow: 0 8px 24px rgb(0 0 0 / 10%);
+}
+
+/* Descripción de Sobre nosotros */
+.about-copy {
+  max-width: 36rem;
+  font-size: 1.125rem;
+  line-height: 1.85;
+}
+
+/* Mapa */
+.map-frame {
+  overflow: hidden;
+  border: 1px solid #e6e1d7;
+  border-radius: 16px;
+  background: #f4f1ea;
+}
+
+.map-frame iframe {
+  display: block;
+  width: 100%;
+  height: clamp(20rem, 40vw, 28.125rem);
+}
+
+/* Tarjetas de productos */
+.card {
+  transition: transform 180ms ease, box-shadow 180ms ease;
+}
+
+@media (hover: hover) and (prefers-reduced-motion: no-preference) {
+  .card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 28px rgb(32 51 37 / 10%) !important;
+  }
+}
+
+/* Ajustes para celular */
+@media (max-width: 575px) {
+  .cover {
+    padding: 16px 12px;
+  }
+
+  .cover img,
+  .about-photo {
+    border-radius: 10px;
+  }
+
+  .about-section,
+  .location-section {
+    padding-block: 32px;
+  }
+
+  .about-copy {
+    font-size: 1rem;
+    line-height: 1.7;
+  }
+}

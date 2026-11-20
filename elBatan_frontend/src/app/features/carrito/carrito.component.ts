@@ -1,10 +1,10 @@
 
 import { Component, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { CartService } from '../../core/services/cart.service';
-import { AlertService } from '../../core/services/alert.service';
 import { Router, RouterLink } from '@angular/router';
-import { ItemVentaDTO, VentaDTO } from '../../core/Interfaces/pedido.interface';
+import { VentaDTO } from '../../core/Interfaces/pedido.interface';
+import { AlertService } from '../../core/services/alert.service';
+import { CartService } from '../../core/services/cart.service';
 import { PedidoService } from '../../core/services/pedido.service';
 
 @Component({
@@ -15,69 +15,82 @@ import { PedidoService } from '../../core/services/pedido.service';
   styleUrl: './carrito.component.css'
 })
 export class CarritoComponent {
+  readonly cartService = inject(CartService);
+  private readonly alertService = inject(AlertService);
+  private readonly pedidoService = inject(PedidoService);
+  private readonly router = inject(Router);
 
-  public cartService = inject(CartService);
+  direccion = '';
+  referencia = '';
+  telefonoEntrega = '';
+  enviando = false;
 
-  private pedidoService = inject(PedidoService);
-  private alertService = inject(AlertService);
-  private router = inject(Router);
+  async pagar(): Promise<void> {
+    const carrito = this.cartService.getItems();
 
-  direccionEntrega: string = '';
-
-  // Este valor debe obtenerse del cliente que inició sesión.
-  // No debemos dejar un ID fijo para las ventas reales.
- idPersona: number | null = 3;
-
-  async pagar() {
-
-    if (this.cartService.getItems().length === 0) {
-      this.alertService.error('El carrito está vacío');
+    if (this.enviando || carrito.length === 0) {
       return;
     }
 
-    if (!this.direccionEntrega.trim()) {
-      this.alertService.error('Ingresa la dirección de entrega');
+    if (!localStorage.getItem('elBatan.token')) {
+      await this.router.navigate(['/login'], {
+        queryParams: { destino: 'carrito' }
+      });
       return;
     }
 
-    if (this.idPersona === null) {
-      this.alertService.error('No se ha identificado al cliente. Inicia sesión primero.');
+    const direccion = this.direccion.trim();
+    const telefonoEntrega = this.telefonoEntrega.trim();
+
+    if (!direccion || !/^\d{9}$/.test(telefonoEntrega)) {
+      this.alertService.error('Ingresa tu dirección y un teléfono de 9 dígitos.');
       return;
     }
+
+    this.enviando = true;
 
     const confirmado = await this.alertService.confirm(
-      '¿Deseas confirmar tu compra?'
+      '¿Deseas confirmar tu pedido de delivery?'
     );
 
-    if (!confirmado) return;
+    if (!confirmado) {
+      this.enviando = false;
+      return;
+    }
 
-    const itemsEnvio: ItemVentaDTO[] =
-      this.cartService.getItems().map(item => ({
+    const pedido: VentaDTO = {
+      direccion,
+      referencia: this.referencia.trim(),
+      telefonoEntrega,
+      items: carrito.map(item => ({
         idProducto: item.producto.id!,
         cantidad: item.cantidad
-      }));
-
-    const pedidoFinal: VentaDTO = {
-      idPersona: this.idPersona,
-      direccion: this.direccionEntrega,
-      items: itemsEnvio
+      }))
     };
 
-    this.pedidoService.crearPedido(pedidoFinal).subscribe({
-      next: (res) => {
-        this.alertService.success(
-          'Tu pedido ha sido registrado correctamente',
-          '¡Venta realizada!'
-        );
-
+    this.pedidoService.crearPedido(pedido).subscribe({
+      next: (respuesta) => {
+        this.enviando = false;
         this.cartService.vaciarCarrito();
-        this.router.navigate(['/home']);
-      },
-      error: (err) => {
-        const msg = err.error?.message
-          || 'No se pudo procesar el pedido';
 
-        this.alertService.error(msg, 'Error en la venta');
+        this.alertService.success(
+          `Tu pedido ${respuesta.codigoPedido} está en preparación.`,
+          'Pedido confirmado'
+        );
+      },
+      error: (respuesta) => {
+        this.enviando = false;
+
+        if (respuesta.status === 401) {
+          this.alertService.error(
+            'Inicia sesión de nuevo para continuar con tu pedido.'
+          );
+          return;
+        }
+
+        this.alertService.error(
+          respuesta.error?.message || 'No se pudo guardar el pedido. Revisa los datos y el stock.'
+        );
       }
     });
   }

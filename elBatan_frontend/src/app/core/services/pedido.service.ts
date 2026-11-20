@@ -1,28 +1,48 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { VentaDTO } from '../Interfaces/pedido.interface';
-import { Observable } from 'rxjs';
 
-@Injectable({
-  providedIn: 'root'
-})
+interface PedidoCreado {
+  idPedido: number;
+  codigoPedido: string;
+}
+
+export interface PedidoHistorial {
+  idPedido: number;
+  codigoPedido: string;
+  cliente: string;
+  estado: string;
+  total: number;
+  direccion: string;
+  fecha?: string | null;
+  productos?: {
+    producto: string;
+    cantidad: number;
+  }[];
+}
+
+@Injectable({ providedIn: 'root' })
 export class PedidoService {
+  private readonly http = inject(HttpClient);
+  private readonly rutaPedidos = '/elBatan/api/v1/pedidos';
 
-  private http = inject(HttpClient);
-  private apiUrl = '/api/v1/pedidos';
+  crearPedido(datos: VentaDTO) {
+    return this.http.post<PedidoCreado>(this.rutaPedidos, datos);
+  }
 
-  crearPedido(venta: VentaDTO): Observable<any> {
-    return this.http.post<any>(this.apiUrl, venta);
+  listarMisPedidos() {
+    return this.http.get<PedidoHistorial[]>(`${this.rutaPedidos}/mios`);
+  }
+
+  listarTodos() {
+    return this.http.get<PedidoHistorial[]>(this.rutaPedidos);
   }
 
   actualizarEstado(idPedido: number, estado: string) {
-  return this.http.put(
-    `${this.apiUrl}/${idPedido}/estado`,
-    null,
-    {
-      params: { estado }
-    }
-  );
-}
-
+    return this.http.put<PedidoHistorial>(
+      `${this.rutaPedidos}/${idPedido}/estado`,
+      null,
+      { params: { estado } }
+    );
+  }
 }

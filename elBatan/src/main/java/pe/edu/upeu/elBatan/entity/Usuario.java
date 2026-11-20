@@ -2,6 +2,9 @@ package pe.edu.upeu.elBatan.entity;
 
 import jakarta.persistence.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity
 @Table(name = "usuario")
 public class Usuario {
@@ -15,6 +18,8 @@ public class Usuario {
     @Column(nullable = false)
     private String password;
 
+    @OneToMany(mappedBy = "usuario")
+    private List<RolUsuario> rolesUsuario = new ArrayList<>();
 
     @OneToOne
     @JoinColumn(name = "id_persona")
@@ -23,10 +28,11 @@ public class Usuario {
     public Usuario() {
     }
 
-    public Usuario(Long idUsuario, String usuario, String password, Persona persona) {
+    public Usuario(Long idUsuario, String usuario, String password, List<RolUsuario> rolesUsuario, Persona persona) {
         this.idUsuario = idUsuario;
         this.usuario = usuario;
         this.password = password;
+        this.rolesUsuario = rolesUsuario;
         this.persona = persona;
     }
 
@@ -54,6 +60,13 @@ public class Usuario {
         this.password = password;
     }
 
+    public List<RolUsuario> getRolesUsuario() {
+        return rolesUsuario;
+    }
+
+    public void setRolesUsuario(List<RolUsuario> rolesUsuario) {
+        this.rolesUsuario = rolesUsuario;
+    }
 
     public Persona getPersona() {
         return persona;

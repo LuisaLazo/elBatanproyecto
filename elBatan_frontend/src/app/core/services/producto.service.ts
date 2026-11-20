@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { catchError, EMPTY, exhaustMap, interval, Observable } from 'rxjs';
 import { Producto } from '../Interfaces/producto.interface';
 
 @Injectable({
@@ -8,41 +8,45 @@ import { Producto } from '../Interfaces/producto.interface';
 })
 export class ProductoService {
   private http = inject(HttpClient);
-  //usamos la ruta del backend
-  private apiUrl = '/api/v1/productos';
+  private apiUrl = '/elBatan/api/v1/productos';
 
-  //(Lista) ruta pública que no necesita un token
-  getProductos():Observable<Producto[]>{
+  getProductos(): Observable<Producto[]> {
     return this.http.get<Producto[]>(this.apiUrl);
   }
-  //obtener por ID (lista)
-  getProductoById(id:number) : Observable<Producto>{
+
+  observarProductos(): Observable<Producto[]> {
+    return interval(5000).pipe(
+      exhaustMap(() =>
+        this.getProductos().pipe(catchError(() => EMPTY))
+      )
+    );
+  }
+
+  getProductoById(id: number): Observable<Producto> {
     return this.http.get<Producto>(`${this.apiUrl}/${id}`);
   }
 
-  //PARA EL ADMIN
-  createProduct(formData: FormData):Observable<Producto>{
-    console.log("Form data recibido create");
-    formData.forEach((value,key)=>{
-      console.log(`${key}:`,value);
+  // PARA EL ADMIN
+  createProduct(formData: FormData): Observable<Producto> {
+    console.log('Form data recibido create');
+    formData.forEach((value, key) => {
+      console.log(`${key}:`, value);
+    });
 
-    })
-    return this.http.post<Producto>(this.apiUrl,formData);
+    return this.http.post<Producto>(this.apiUrl, formData);
   }
 
-  updateProduct(id:number, formData: FormData):Observable<Producto>{
-    console.log("Form data recibido update");
-    formData.forEach((value,key)=>{
-      console.log(`${key}:`,value);
+  updateProduct(id: number, formData: FormData): Observable<Producto> {
+    console.log('Form data recibido update');
+    formData.forEach((value, key) => {
+      console.log(`${key}:`, value);
+    });
 
-    })
-    return this.http.put<Producto>(`${this.apiUrl}/${id}`,formData);
+    return this.http.put<Producto>(`${this.apiUrl}/${id}`, formData);
   }
 
-  deleteProduct(id:number):Observable<void>{
-    console.log("Id del producto a eliminar", id);
+  deleteProduct(id: number): Observable<void> {
+    console.log('Id del producto a eliminar', id);
     return this.http.delete<void>(`${this.apiUrl}/${id}`);
   }
-
-
 }

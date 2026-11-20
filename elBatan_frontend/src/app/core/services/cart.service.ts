@@ -7,62 +7,88 @@ import { Producto } from '../Interfaces/producto.interface';
   providedIn: 'root'
 })
 export class CartService {
-  private alertService = inject(AlertService);
-  private cartItems = signal<CartItem[]>(this.loadCart());
+  private readonly alertService = inject(AlertService);
+  private readonly limitePorProducto = 20;
+  private readonly cartItems = signal<CartItem[]>(this.loadCart());
 
   totalItems = computed(() => this.cartItems().length);
+
+  totalPrice = computed(() =>
+    this.cartItems().reduce(
+      (total, item) => total + item.producto.precio * item.cantidad,
+      0
+    )
+  );
 
   getItems() {
     return this.cartItems();
   }
 
+  maxCantidad(producto: Producto): number {
+    return Math.max(0, Math.min(this.limitePorProducto, producto.stock));
+  }
+
   private loadCart(): CartItem[] {
     const cart = localStorage.getItem('cart_ecommerce');
-    return cart ? JSON.parse(cart) : [];
+    const items: CartItem[] = cart ? JSON.parse(cart) : [];
 
+    return items.map(item => ({
+      ...item,
+      cantidad: Math.min(item.cantidad, this.limitePorProducto)
+    }));
   }
 
-  //si el m+étodo es privado
-  private saveCart() {
-    localStorage.setItem('cart_ecommerce', JSON.stringify(this.cartItems()))
+  private saveCart(): void {
+    localStorage.setItem('cart_ecommerce', JSON.stringify(this.cartItems()));
   }
 
-  totalPrice = computed(() =>
-    this.cartItems().reduce((acc, item) => acc + (item.producto.precio * item.cantidad), 0)
-  )
+  agregarProducto(producto: Producto): void {
+    const items = this.cartItems();
+    const existente = items.find(item => item.producto.id === producto.id);
+    const cantidad = (existente?.cantidad ?? 0) + 1;
+    const maximo = this.maxCantidad(producto);
 
-  agregarProducto(producto: Producto) {
-    const actualItem = this.cartItems();
-    const itemExistente = actualItem.find(item => item.producto.id === producto.id);
-    if (itemExistente) {
-      itemExistente.cantidad++;
-      this.cartItems.set([...actualItem]);
-    } else {
-      this.cartItems.set([...actualItem, { producto, cantidad: 1 }])
+    if (cantidad > maximo) {
+      this.alertService.error(
+        maximo === 0
+          ? 'Este producto está agotado.'
+          : `Puedes agregar hasta ${maximo} unidades de este producto.`
+      );
+      return;
     }
+
+    const nuevosItems = existente
+      ? items.map(item => item === existente ? { producto, cantidad } : item)
+      : [...items, { producto, cantidad }];
+
+    this.cartItems.set(nuevosItems);
     this.saveCart();
-    this.alertService.toast(`Añadido: ${producto.nombre}`)
+    this.alertService.toast(`Añadido: ${producto.nombre}`);
   }
 
-  eliminarItem(id:number){
+  eliminarItem(id: number): void {
     this.cartItems.set(this.cartItems().filter(item => item.producto.id !== id));
     this.saveCart();
     this.alertService.toast('Producto eliminado');
   }
 
-  actualizarCantidad(id:number, delta:number){
-    const items = this.cartItems().map(item =>{
-      if(item.producto.id === id){
-        const nuevaCant = item.cantidad + delta;
-        return {...item, cantidad: nuevaCant>0 ? nuevaCant:1}
+  actualizarCantidad(id: number, delta: number): void {
+    this.cartItems.update(items => items.map(item => {
+      if (item.producto.id !== id) return item;
+
+      const cantidad = Math.max(1, item.cantidad + delta);
+
+      if (delta > 0 && cantidad > this.maxCantidad(item.producto)) {
+        return item;
       }
-      return item;
-    });
-    this.cartItems.set(items);
+
+      return { ...item, cantidad };
+    }));
+
     this.saveCart();
   }
 
-  vaciarCarrito(){
+  vaciarCarrito(): void {
     this.cartItems.set([]);
     this.saveCart();
   }
