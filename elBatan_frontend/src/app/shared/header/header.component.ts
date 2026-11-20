@@ -30,6 +30,7 @@ export class HeaderComponent {
   }
 
   cerrarSesion(): void {
+    this.cartService.vaciarCarrito();
     this.authService.cerrarSesion();
     void this.router.navigate(['/home']);
   }
