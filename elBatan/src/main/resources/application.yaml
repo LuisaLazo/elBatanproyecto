@@ -1,6 +1,8 @@
+
 spring:
   application:
     name: elBatan
+
   datasource:
     url: jdbc:mysql://localhost:3306/elBatanLP2?useSSL=false&serverTimezone=America/Lima&allowPublicKeyRetrieval=true
     username: root
@@ -9,7 +11,7 @@ spring:
 
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: none
     show-sql: true
     properties:
       hibernate:

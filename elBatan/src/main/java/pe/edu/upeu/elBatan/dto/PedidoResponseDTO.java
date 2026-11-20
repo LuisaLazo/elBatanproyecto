@@ -5,14 +5,14 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 public record PedidoResponseDTO(
-
         Long idPedido,
         String cliente,
         BigDecimal total,
         String estado,
         LocalDateTime fecha,
         String direccion,
+        String referencia,
+        String telefonoEntrega,
         List<DetalleResponseDTO> productos
-
 ) {
 }

@@ -6,8 +6,11 @@ import pe.edu.upeu.elBatan.dto.DetalleResponseDTO;
 import pe.edu.upeu.elBatan.dto.ItemVentaDTO;
 import pe.edu.upeu.elBatan.dto.PedidoResponseDTO;
 import pe.edu.upeu.elBatan.dto.VentaDTO;
-import pe.edu.upeu.elBatan.entity.*;
+import pe.edu.upeu.elBatan.entity.DetallePedido;
 import pe.edu.upeu.elBatan.entity.Estado;
+import pe.edu.upeu.elBatan.entity.Pedido;
+import pe.edu.upeu.elBatan.entity.Persona;
+import pe.edu.upeu.elBatan.entity.Producto;
 import pe.edu.upeu.elBatan.exception.InsufficientStockException;
 import pe.edu.upeu.elBatan.exception.ResourceNotFoundException;
 import pe.edu.upeu.elBatan.repository.PedidoRepository;
@@ -18,15 +21,20 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 
 @Service
-public class PedidoServiceImpl implements IPedidoService{
+public class PedidoServiceImpl implements IPedidoService {
+
     private final PedidoRepository pedidoRepository;
     private final ProductoRepository productoRepository;
     private final PersonaRepository personaRepository;
 
-    public PedidoServiceImpl(PedidoRepository pedidoRepository, ProductoRepository productoRepository, PersonaRepository personaRepository) {
+    public PedidoServiceImpl(
+            PedidoRepository pedidoRepository,
+            ProductoRepository productoRepository,
+            PersonaRepository personaRepository) {
         this.pedidoRepository = pedidoRepository;
         this.productoRepository = productoRepository;
         this.personaRepository = personaRepository;
@@ -34,79 +42,72 @@ public class PedidoServiceImpl implements IPedidoService{
 
     @Override
     @Transactional
-    public PedidoResponseDTO realizarPedido(VentaDTO dto) {
-        //1. validar el cliente
-        Persona persona = personaRepository.findById(dto.idPersona())
-                .orElseThrow(()-> new ResourceNotFoundException("Cliente no encontrado"));
-        //2. creamos la cabecera del pedido
+    public PedidoResponseDTO realizarPedido(Long idPersona, VentaDTO dto) {
+        Persona persona = personaRepository.findById(idPersona)
+                .orElseThrow(() -> new ResourceNotFoundException("Cliente no encontrado"));
+
         Pedido pedido = new Pedido();
         pedido.setPersona(persona);
         pedido.setEstado(Estado.EN_LOCAL);
         pedido.setFechaPedido(LocalDateTime.now());
         pedido.setDireccion(dto.direccion());
+        pedido.setReferencia(dto.referencia());
+        pedido.setTelefonoEntrega(dto.telefonoEntrega());
 
         List<DetallePedido> detalles = new ArrayList<>();
         BigDecimal totalPedido = BigDecimal.ZERO;
-        //3. Procesamos cada item del carrito
-        for (ItemVentaDTO item: dto.items()){
+
+        for (ItemVentaDTO item : dto.items()) {
             Producto producto = productoRepository.findById(item.idProducto())
-                    .orElseThrow(()-> new ResourceNotFoundException("Producto: "+item.idProducto()+" No existe"));
-            //4. Validar stock
-            if (producto.getStock() <item.cantidad()){
-                throw new InsufficientStockException("Stock insuficiente de "+producto.getNombre());
+                    .orElseThrow(() -> new ResourceNotFoundException(
+                            "Producto " + item.idProducto() + " no encontrado"));
+
+            if (producto.getStock() < item.cantidad()) {
+                throw new InsufficientStockException(
+                        "Stock insuficiente de " + producto.getNombre());
             }
-            //actualizar el stock
-            producto.setStock(producto.getStock() -item.cantidad());
+
+            producto.setStock(producto.getStock() - item.cantidad());
             productoRepository.save(producto);
-            //creamos el detalle
+
+            BigDecimal subtotal = producto.getPrecio()
+                    .multiply(BigDecimal.valueOf(item.cantidad()));
+
             DetallePedido detalle = new DetallePedido();
             detalle.setPedido(pedido);
             detalle.setProducto(producto);
             detalle.setCantidad(item.cantidad());
             detalle.setPrecioUnitario(producto.getPrecio());
-            BigDecimal subTotal = producto.getPrecio().multiply(new BigDecimal(item.cantidad()));
-            detalle.setSubtotal(subTotal);
+            detalle.setSubtotal(subtotal);
+
             detalles.add(detalle);
-            totalPedido = totalPedido.add(subTotal);
-
-
+            totalPedido = totalPedido.add(subtotal);
         }
 
-        //guardar pedido y detalles
         pedido.setTotal(totalPedido);
         pedido.setDetalle(detalles);
-        Pedido pedidoGuardado = pedidoRepository.save(pedido);
-        //convertir los detalles guardados a DTOs para la respuesta
-        List<DetalleResponseDTO> productoResponse = pedidoGuardado.getDetalle().stream()
-                .map(d-> new DetalleResponseDTO(
-                        d.getProducto().getNombre(),
-                        d.getCantidad(),
-                        d.getPrecioUnitario(),
-                        d.getSubtotal()
-                )).toList();
-        //Devolver la respuesta completa
 
-        return new PedidoResponseDTO(
-                pedidoGuardado.getIdPedido(),
-                persona.getNombre(),
-                pedidoGuardado.getTotal(),
-                pedidoGuardado.getEstado().name(),
-                pedidoGuardado.getFechaPedido(),
-                pedidoGuardado.getDireccion(),
-                productoResponse
-        );
+        return convertToDTO(pedidoRepository.save(pedido));
     }
 
     @Override
     @Transactional(readOnly = true)
     public List<PedidoResponseDTO> listarTodo() {
-        return pedidoRepository.findAll()
-                .stream()
+        return pedidoRepository.findAll().stream()
                 .map(this::convertToDTO)
                 .toList();
     }
 
     @Override
+    @Transactional(readOnly = true)
+    public List<PedidoResponseDTO> listarPorCliente(Long idPersona) {
+        return pedidoRepository.findByPersonaIdPersona(idPersona).stream()
+                .map(this::convertToDTO)
+                .toList();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
     public Optional<PedidoResponseDTO> buscarPorId(Long id) {
         return pedidoRepository.findById(id)
                 .map(this::convertToDTO);
@@ -115,61 +116,52 @@ public class PedidoServiceImpl implements IPedidoService{
     @Override
     @Transactional(readOnly = true)
     public List<PedidoResponseDTO> listarPorEstado(Estado estado) {
-
-        return pedidoRepository.findByEstado(estado.name())
-                .stream()
+        return pedidoRepository.findByEstado(estado.name()).stream()
                 .map(this::convertToDTO)
                 .toList();
     }
 
     @Override
+    @Transactional
     public Optional<PedidoResponseDTO> actualizarEstado(Long id, String estado) {
+        return pedidoRepository.findById(id).map(pedido -> {
+            Estado nuevoEstado;
 
-        return pedidoRepository.findById(id)
-                .map(pedido -> {
+            try {
+                nuevoEstado = Estado.valueOf(estado.toUpperCase(Locale.ROOT));
+            } catch (IllegalArgumentException ex) {
+                throw new IllegalArgumentException("Estado de pedido no válido: " + estado);
+            }
 
-                    try {
-                        Estado nuevoEstado = Estado.valueOf(
-                                estado.toUpperCase()
-                        );
-
-                        pedido.setEstado(nuevoEstado);
-
-                        Pedido pedidoActualizado =
-                                pedidoRepository.save(pedido);
-
-                        return convertToDTO(pedidoActualizado);
-
-                    } catch (IllegalArgumentException e) {
-                        throw new IllegalArgumentException(
-                                "Estado de pedido no válido: " + estado
-                        );
-                    }
-                });
+            pedido.setEstado(nuevoEstado);
+            return convertToDTO(pedidoRepository.save(pedido));
+        });
     }
 
     @Override
     public boolean eliminar(Long id) {
-
         if (pedidoRepository.existsById(id)) {
             pedidoRepository.deleteById(id);
             return true;
         }
-
         return false;
     }
 
-
     private PedidoResponseDTO convertToDTO(Pedido pedido) {
+        List<DetalleResponseDTO> productos = pedido.getDetalle().stream()
+                .map(detalle -> {
+                    Producto producto = detalle.getProducto();
+                    String nombreProducto = producto == null
+                            ? "Producto no disponible"
+                            : producto.getNombre();
 
-        List<DetalleResponseDTO> detalleResponse = pedido.getDetalle()
-                .stream()
-                .map(d -> new DetalleResponseDTO(
-                        d.getProducto().getNombre(),
-                        d.getCantidad(),
-                        d.getPrecioUnitario(),
-                        d.getSubtotal()
-                ))
+                    return new DetalleResponseDTO(
+                            nombreProducto,
+                            detalle.getCantidad(),
+                            detalle.getPrecioUnitario(),
+                            detalle.getSubtotal()
+                    );
+                })
                 .toList();
 
         return new PedidoResponseDTO(
@@ -179,7 +171,9 @@ public class PedidoServiceImpl implements IPedidoService{
                 pedido.getEstado().name(),
                 pedido.getFechaPedido(),
                 pedido.getDireccion(),
-                detalleResponse
+                pedido.getReferencia(),
+                pedido.getTelefonoEntrega(),
+                productos
         );
     }
 }
