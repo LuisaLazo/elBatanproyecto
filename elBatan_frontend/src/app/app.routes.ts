@@ -6,6 +6,7 @@ import { HomeComponent } from './features/home/home.component';
 import { ProductListComponent } from './features/products/product-list/product-list.component';
 import { ProductFormComponent } from './features/products/product-form/product-form.component';
 import { CarritoComponent } from './features/carrito/carrito.component';
+import { ReportesComponent } from './features/reportes/reportes.component';
 
 const requiereAdmin: CanActivateChildFn = () => {
   const router = inject(Router);
