@@ -1,6 +1,7 @@
 package pe.edu.upeu.elBatan.controller;
 
 import jakarta.validation.Valid;
+import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -13,48 +14,44 @@ import pe.edu.upeu.elBatan.services.IProductoService;
 
 import java.util.List;
 
-
 @RestController
 @RequestMapping("/api/v1/productos")
 public class ProductoController {
+
     private final IProductoService productoService;
     private final IFileStorageService fileStorageService;
 
-    public ProductoController(IProductoService productoService, IFileStorageService fileStorageService) {
+    public ProductoController(
+            IProductoService productoService,
+            IFileStorageService fileStorageService
+    ) {
         this.productoService = productoService;
         this.fileStorageService = fileStorageService;
     }
 
-    //listar productos
     @GetMapping
-    public ResponseEntity<List<ProductoDTO>> listar(){
+    public ResponseEntity<List<ProductoDTO>> listar() {
         return ResponseEntity.ok(productoService.listarTodo());
     }
+
     @GetMapping("/{id}")
-    public ResponseEntity<ProductoDTO> obtener(@PathVariable Long id){
+    public ResponseEntity<ProductoDTO> obtener(@PathVariable Long id) {
         return productoService.buscarPorId(id)
                 .map(ResponseEntity::ok)
-                .orElseThrow(()-> new ResourceNotFoundException("Producto no encontrado con Id:"+id));
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "Producto no encontrado con ID: " + id
+                ));
     }
-    //post sin imagen
-    /*
-    @PostMapping
-    public ResponseEntity<ProductoDTO> crear(@Valid @RequestBody ProductoDTO dto){
-        return new ResponseEntity<>(productoService.crear(dto), HttpStatus.CREATED);
-    }
-    */
 
-    @PostMapping(consumes = { MediaType.MULTIPART_FORM_DATA_VALUE })
+    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<ProductoDTO> crear(
-            @ModelAttribute @org.springdoc.core.annotations.ParameterObject @Valid ProductoDTO dto,  // Cambiado de @RequestPart a @ModelAttribute
-            @RequestPart(value = "file", required = false) MultipartFile file) {
+            @ModelAttribute @ParameterObject @Valid ProductoDTO dto,
+            @RequestPart(value = "file", required = false) MultipartFile file
+    ) {
+        String nombreImagen = file != null && !file.isEmpty()
+                ? fileStorageService.store(file)
+                : "no-image.png";
 
-        String nombreImagen = "no-image.png";
-        if (file != null && !file.isEmpty()) {
-            nombreImagen = fileStorageService.store(file);
-        }
-
-        // Como los Records son inmutables, creamos uno nuevo con el nombre de la imagen
         ProductoDTO productoConImagen = new ProductoDTO(
                 null,
                 dto.nombre(),
@@ -64,54 +61,48 @@ public class ProductoController {
                 nombreImagen
         );
 
-        return new ResponseEntity<>(productoService.crear(productoConImagen), HttpStatus.CREATED);
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(productoService.crear(productoConImagen));
     }
-    //put sin imagenes
-    /*
-    @PutMapping("/{id}")
-    public ResponseEntity<ProductoDTO> actualizar(@PathVariable Long id,
-                                               @Valid @RequestBody ProductoDTO dto){
-        return productoService.actualizar(id,dto)
-                .map(ResponseEntity::ok)
-                .orElseThrow(()-> new ResourceNotFoundException("No se pudo actualizar con Id:"+id));
 
-    }
-     */
-
-    //put con imagenes
-
-    @PutMapping(value = "/{id}", consumes = { MediaType.MULTIPART_FORM_DATA_VALUE })
+    @PutMapping(value = "/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<ProductoDTO> actualizar(
             @PathVariable Long id,
-            @ModelAttribute @org.springdoc.core.annotations.ParameterObject @Valid ProductoDTO dto,
-            @RequestPart(value = "file", required = false) MultipartFile file) {
+            @ModelAttribute @ParameterObject @Valid ProductoDTO dto,
+            @RequestPart(value = "file", required = false) MultipartFile file
+    ) {
+        String nuevaImagen = file != null && !file.isEmpty()
+                ? fileStorageService.store(file)
+                : null;
 
-        // 1. Obtener el producto actual para saber qué imagen tiene
-        ProductoDTO productoActual = productoService.buscarPorId(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Producto no encontrado"));
-
-        String nombreImagen = productoActual.imagen(); // Por defecto mantenemos la actual
-
-        // 2. Si el usuario subió un nuevo archivo, lo guardamos
-        if (file != null && !file.isEmpty()) {
-            nombreImagen = fileStorageService.store(file);
-        }
-
-        // 3. Creamos el DTO final con el nombre de la imagen (nueva o vieja)
         ProductoDTO dtoParaActualizar = new ProductoDTO(
-                id, dto.nombre(), dto.descripcion(), dto.precio(), dto.stock(), nombreImagen
+                id,
+                dto.nombre(),
+                dto.descripcion(),
+                dto.precio(),
+                dto.stock(),
+                nuevaImagen
         );
 
-        return productoService.actualizar(id, dtoParaActualizar)
-                .map(ResponseEntity::ok)
-                .orElseThrow(() -> new ResourceNotFoundException("Error al actualizar"));
+        try {
+            return productoService.actualizar(id, dtoParaActualizar)
+                    .map(ResponseEntity::ok)
+                    .orElseThrow(() -> new ResourceNotFoundException(
+                            "Producto no encontrado con ID: " + id
+                    ));
+        } catch (RuntimeException ex) {
+            if (nuevaImagen != null) {
+                fileStorageService.delete(nuevaImagen);
+            }
+            throw ex;
+        }
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> eliminar(@PathVariable Long id){
-        if (productoService.eliminar(id)){
+    public ResponseEntity<Void> eliminar(@PathVariable Long id) {
+        if (productoService.eliminar(id)) {
             return ResponseEntity.noContent().build();
         }
-        throw new ResourceNotFoundException("No se pudo eliminar con Id:"+id);
+        throw new ResourceNotFoundException("No se pudo eliminar con ID: " + id);
     }
 }
