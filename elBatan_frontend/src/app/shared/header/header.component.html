@@ -1,7 +1,10 @@
-<nav class="navbar navbar-expand-xl bg-batan-primary px-3 px-lg-5" data-bs-theme="dark" aria-label="Navegación principal">
+<nav class="navbar navbar-expand-xl bg-batan-primary px-3 px-lg-5"
+     data-bs-theme="dark" aria-label="Navegación principal">
   <div class="container-fluid px-0">
-    <a class="navbar-brand d-flex align-items-center py-0" routerLink="/home" aria-label="Inicio de El Batán">
-      <img class="brand-logo" src="logo-el-batan-transparente.png" alt="El Batán, restaurante y pollería" width="144" height="96">
+    <a class="navbar-brand d-flex align-items-center py-0"
+       routerLink="/home" aria-label="Inicio de El Batán">
+      <img class="brand-logo" src="logo-el-batan-transparente.png"
+           alt="El Batán, restaurante y pollería" width="144" height="96">
     </a>
 
     <div class="d-flex align-items-center gap-3 order-xl-last ms-auto">
@@ -9,20 +12,15 @@
          [attr.aria-label]="'Carrito, ' + cartService.totalItems() + ' productos distintos'">
         <i class="bi bi-bag fs-4" aria-hidden="true"></i>
         @if (cartService.totalItems() > 0) {
-          <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill cart-count" aria-hidden="true">
+          <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill cart-count"
+                aria-hidden="true">
             {{ cartService.totalItems() }}
           </span>
         }
       </a>
-
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
-              data-bs-target="#batanNavigation" aria-controls="batanNavigation"
-              aria-expanded="false" aria-label="Mostrar u ocultar menú">
-        <span class="navbar-toggler-icon"></span>
-      </button>
     </div>
 
-    <div class="collapse navbar-collapse" id="batanNavigation">
+    <div class="navbar-collapse" id="batanNavigation">
       <ul class="navbar-nav mx-auto gap-xl-4 gap-xxl-5 py-3 py-xl-0">
         <li class="nav-item"><a class="nav-link" routerLink="/home">Inicio</a></li>
         <li class="nav-item"><a class="nav-link" routerLink="/home" fragment="carta">Nuestra carta</a></li>

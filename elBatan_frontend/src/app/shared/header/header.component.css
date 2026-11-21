@@ -1,13 +1,111 @@
-.navbar .nav-link {
-  color: #ffffff;
-  transition: color 0.2s ease;
+.navbar {
+  background: #254832 !important;
+  border-bottom: 2px solid #d1a674;
+  box-shadow: 0 4px 16px rgb(29 52 36 / 13%);
+  padding-block: .65rem;
 }
 
-.navbar .nav-link:hover,
-.navbar .nav-link:focus-visible {
-  color: #ffda9d;
+.navbar-brand {
+  display: grid !important;
+  place-items: center;
+  padding-inline: .65rem;
+  background: #f7ead8;
+  border-radius: .8rem;
+}
+
+.brand-logo {
+  display: block;
+  width: 6rem;
+  height: auto;
+  aspect-ratio: 3 / 2;
+  object-fit: contain;
+}
+
+.navbar .nav-link {
+  display: flex;
+  align-items: center;
+  min-height: 2.75rem;
+  padding: .55rem .65rem;
+  color: #f7f4ec;
+  border-radius: .6rem;
+  font-size: .925rem;
+  font-weight: 500;
+  transition: color .2s ease, background-color .2s ease;
 }
 
 .navbar .nav-link .bi {
   color: inherit;
+}
+
+.navbar .nav-link:hover,
+.navbar .nav-link:focus-visible {
+  color: #ffe3b4;
+  background: rgb(255 255 255 / 10%);
+}
+
+.navbar .nav-link:focus-visible,
+.navbar-brand:focus-visible,
+.navbar-toggler:focus-visible {
+  outline: 2px solid #ffd798;
+  outline-offset: 3px;
+}
+
+#batanNavigation a.nav-link[href$="/login"],
+#batanNavigation button.nav-link {
+  width: max-content;
+  padding-inline: .95rem;
+  border: 1px solid #d1a674;
+  border-radius: 999px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+#batanNavigation a.nav-link[href$="/login"] {
+  background: #ffdda9;
+  color: #253e2d;
+}
+
+#batanNavigation a.nav-link[href$="/login"]:hover,
+#batanNavigation a.nav-link[href$="/login"]:focus-visible {
+  background: #ffebcd;
+}
+
+#batanNavigation button.nav-link {
+  background: transparent;
+  color: #ffdda9;
+}
+
+#batanNavigation button.nav-link:hover,
+#batanNavigation button.nav-link:focus-visible {
+  background: rgb(255 221 169 / 14%);
+}
+
+.navbar .cart-link,
+.navbar-toggler {
+  display: grid;
+  width: 2.75rem;
+  min-height: 2.75rem;
+  place-items: center;
+  padding: 0;
+  border: 1px solid rgb(247 244 236 / 35%);
+  border-radius: .7rem;
+}
+
+.cart-count {
+  background: #ffdda9;
+  color: #253e2d;
+}
+
+@media (min-width: 1200px) {
+  .navbar-nav {
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: .2rem .35rem !important;
+    padding-inline: .65rem;
+  }
+
+  .brand-logo {
+    width: 7rem;
+  }
 }
