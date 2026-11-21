@@ -1,8 +1,9 @@
 package pe.edu.upeu.elBatan.services;
 
-import jakarta.persistence.Entity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionSynchronization;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
 import pe.edu.upeu.elBatan.dto.ProductoDTO;
 import pe.edu.upeu.elBatan.entity.Producto;
 import pe.edu.upeu.elBatan.repository.ProductoRepository;
@@ -11,11 +12,18 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-public class ProductoServiceImpl implements IProductoService{
+public class ProductoServiceImpl implements IProductoService {
+
+    private static final String RUTA_IMAGENES = "/elBatan/images/";
+    private static final String IMAGEN_PREDETERMINADA = "no-image.png";
+
     private final ProductoRepository productoRepository;
     private final IFileStorageService fileStorageService;
 
-    public ProductoServiceImpl(ProductoRepository productoRepository, IFileStorageService fileStorageService) {
+    public ProductoServiceImpl(
+            ProductoRepository productoRepository,
+            IFileStorageService fileStorageService
+    ) {
         this.productoRepository = productoRepository;
         this.fileStorageService = fileStorageService;
     }
@@ -36,62 +44,86 @@ public class ProductoServiceImpl implements IProductoService{
 
     @Override
     @Transactional
-    public ProductoDTO crear(ProductoDTO p) {
-        Producto pro = new Producto();
-        pro.setNombre(p.nombre());
-        pro.setDescripcion(p.descripcion());
-        pro.setPrecio(p.precio());
-        pro.setStock(p.stock());
-        pro.setImagen(p.imagen());
-        return convertToDTO(productoRepository.save(pro));
+    public ProductoDTO crear(ProductoDTO dto) {
+        Producto producto = new Producto();
+        producto.setNombre(dto.nombre());
+        producto.setDescripcion(dto.descripcion());
+        producto.setPrecio(dto.precio());
+        producto.setStock(dto.stock());
+        producto.setImagen(dto.imagen());
+        return convertToDTO(productoRepository.save(producto));
     }
 
     @Override
     @Transactional
     public Optional<ProductoDTO> actualizar(Long id, ProductoDTO dto) {
-        return productoRepository.findById(id).map(p -> {
-            // Lógica de limpieza de archivos:
-            // Si el nombre de imagen que viene en el DTO es distinto al de la BD,
-            // borramos el archivo físico anterior para no dejar basura.
-            if (p.getImagen() != null && !p.getImagen().equals(dto.imagen())) {
-                fileStorageService.delete(p.getImagen());
+        return productoRepository.findById(id).map(producto -> {
+            String imagenAnterior = nombreArchivo(producto.getImagen());
+            String nuevaImagen = dto.imagen();
+
+            producto.setNombre(dto.nombre());
+            producto.setDescripcion(dto.descripcion());
+            producto.setPrecio(dto.precio());
+            producto.setStock(dto.stock());
+
+            if (nuevaImagen != null && !nuevaImagen.isBlank()) {
+                producto.setImagen(nuevaImagen);
+
+                if (imagenAnterior != null && !imagenAnterior.equals(nuevaImagen)
+                        && !IMAGEN_PREDETERMINADA.equals(imagenAnterior)
+                        && !imagenAnterior.contains("/") && !imagenAnterior.contains("\\")) {
+                    TransactionSynchronizationManager.registerSynchronization(
+                            new TransactionSynchronization() {
+                                @Override
+                                public void afterCompletion(int status) {
+                                    if (status == STATUS_COMMITTED) {
+                                        fileStorageService.delete(imagenAnterior);
+                                    }
+                                }
+                            }
+                    );
+                }
+            } else {
+                producto.setImagen(imagenAnterior);
             }
 
-            p.setNombre(dto.nombre());
-            p.setDescripcion(dto.descripcion());
-            p.setPrecio(dto.precio());
-            p.setStock(dto.stock());
-            p.setImagen(dto.imagen()); // Seteamos el nuevo nombre que viene del controlador
-
-            return convertToDTO(productoRepository.save(p));
+            return convertToDTO(productoRepository.save(producto));
         });
     }
 
     @Override
     @Transactional
     public boolean eliminar(Long id) {
-        return productoRepository.findById(id).map(p -> {
-            // Borrar archivo físico
-            if (p.getImagen() != null) {
-                fileStorageService.delete(p.getImagen());
+        return productoRepository.findById(id).map(producto -> {
+            if (producto.getImagen() != null) {
+                fileStorageService.delete(producto.getImagen());
             }
-            productoRepository.delete(p);
+            productoRepository.delete(producto);
             return true;
         }).orElse(false);
     }
 
-    private ProductoDTO convertToDTO(Producto p) {
-        // En lugar de URL completa, devolvemos solo la ruta relativa
-        // Esto devolverá: "/elBatan_frontend/images/nombre_foto.jpg"
-        String relativePath = "/elBatan/images/" + p.getImagen();
+    private ProductoDTO convertToDTO(Producto producto) {
+        String nombre = nombreArchivo(producto.getImagen());
+        String rutaImagen = nombre == null || nombre.isBlank()
+                ? null
+                : RUTA_IMAGENES + nombre;
 
         return new ProductoDTO(
-                p.getIdProducto(),
-                p.getNombre(),
-                p.getDescripcion(),
-                p.getPrecio(),
-                p.getStock(),
-                relativePath // Enviamos la ruta relativa
+                producto.getIdProducto(),
+                producto.getNombre(),
+                producto.getDescripcion(),
+                producto.getPrecio(),
+                producto.getStock(),
+                rutaImagen
         );
+    }
+
+    private String nombreArchivo(String imagen) {
+        // Corrige los prefijos repetidos que dejaron las ediciones anteriores.
+        while (imagen != null && imagen.startsWith(RUTA_IMAGENES)) {
+            imagen = imagen.substring(RUTA_IMAGENES.length());
+        }
+        return imagen;
     }
 }
