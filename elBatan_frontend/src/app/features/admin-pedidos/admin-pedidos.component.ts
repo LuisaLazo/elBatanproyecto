@@ -15,16 +15,21 @@ import {
       <div class="d-flex flex-wrap align-items-end gap-3 mb-3">
         <div>
           <label for="fechaPedido" class="form-label mb-1">Fecha del pedido</label>
-          <input id="fechaPedido" type="date" class="form-control"
-                 #calendario [value]="fechaSeleccionada"
-                 (change)="fechaSeleccionada = calendario.value">
+          <input #calendario id="fechaPedido" type="date" class="form-control"
+                 [value]="fechaFiltrada"
+                 (change)="filtroFecha = calendario.value || 'hoy'; calendario.value = fechaFiltrada">
         </div>
 
-        <button type="button" class="btn btn-outline-secondary"
-                [disabled]="!fechaSeleccionada"
-                (click)="fechaSeleccionada = ''">
-          Limpiar fecha
-        </button>
+        <div class="btn-group" role="group" aria-label="Periodo de pedidos">
+          <button type="button" class="btn btn-outline-success"
+                  [class.active]="filtroFecha === 'hoy'"
+                  [attr.aria-pressed]="filtroFecha === 'hoy'"
+                  (click)="filtroFecha = 'hoy'">Hoy</button>
+          <button type="button" class="btn btn-outline-success"
+                  [class.active]="filtroFecha === 'todos'"
+                  [attr.aria-pressed]="filtroFecha === 'todos'"
+                  (click)="filtroFecha = 'todos'">Todos los pedidos</button>
+        </div>
       </div>
 
       @if (error) {
@@ -101,12 +106,10 @@ import {
             </section>
           } @empty {
             @if (!error) {
-              @if (fechaSeleccionada) {
-                <p role="status">No hay pedidos que coincidan con los filtros seleccionados.</p>
-              } @else if (codigoBuscado) {
-                <p role="status">No encontramos el pedido {{ codigoBuscado }}.</p>
+              @if (codigoBuscado) {
+                <p role="status">No encontramos el pedido {{ codigoBuscado }} en esta vista.</p>
               } @else {
-                <p>Todavía no hay pedidos.</p>
+                <p role="status">{{ fechaFiltrada ? 'No hay pedidos en la fecha seleccionada.' : 'Todavía no hay pedidos.' }}</p>
               }
             }
           }
@@ -222,7 +225,7 @@ export class AdminPedidosComponent implements OnInit {
   private readonly route = inject(ActivatedRoute);
 
   pedidos: PedidoHistorial[] = [];
-  fechaSeleccionada = '';
+  filtroFecha = 'hoy';
   cargando = true;
   guardandoId: number | null = null;
   error = '';
@@ -238,13 +241,25 @@ export class AdminPedidosComponent implements OnInit {
     return this.route.snapshot.queryParamMap.get('pedido')?.trim().toUpperCase() ?? '';
   }
 
+  get fechaFiltrada(): string {
+    if (this.filtroFecha === 'todos') return '';
+    if (this.filtroFecha !== 'hoy') return this.filtroFecha;
+
+    return new Intl.DateTimeFormat('en-CA', {
+      timeZone: 'America/Lima',
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit'
+    }).format(new Date());
+  }
+
   get pedidosVisibles(): PedidoHistorial[] {
-    const { codigoBuscado, fechaSeleccionada } = this;
+    const { codigoBuscado, fechaFiltrada } = this;
 
     return this.pedidos
       .filter(pedido =>
         (!codigoBuscado || pedido.codigoPedido === codigoBuscado) &&
-        (!fechaSeleccionada || pedido.fecha?.slice(0, 10) === fechaSeleccionada)
+        (!fechaFiltrada || pedido.fecha?.slice(0, 10) === fechaFiltrada)
       )
       .sort((a, b) => {
         const fechaA = Date.parse(a.fecha ?? '');

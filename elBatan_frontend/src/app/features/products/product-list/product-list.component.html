@@ -1,3 +1,11 @@
+<header class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-3">
+  <h1 class="h3 mb-0">Gestión de productos</h1>
+  <a class="btn btn-success" routerLink="/productos/nuevo">
+    <i class="bi bi-plus-lg me-1" aria-hidden="true"></i>
+    Agregar producto
+  </a>
+</header>
+
 <div class="table-responsive">
   <table class="table align-middle mb-0">
     <caption class="visually-hidden">
@@ -48,7 +56,8 @@
                       [disabled]="eliminandoId !== null"
                       [attr.aria-label]="'Eliminar ' + p.nombre"
                       (click)="eliminar(p.id!)">
-                <i class="bi bi-trash me-1" aria-hidden="true"></i>{{ eliminandoId === p.id ? 'Procesando…' : 'Eliminar' }}
+                <i class="bi bi-trash me-1" aria-hidden="true"></i>
+                {{ eliminandoId === p.id ? 'Procesando…' : 'Eliminar' }}
               </button>
             </div>
           </td>
