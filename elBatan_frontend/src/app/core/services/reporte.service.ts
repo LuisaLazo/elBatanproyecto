@@ -15,9 +15,11 @@ export class ReporteService {
 
   private http = inject(HttpClient);
 
+  private apiUrl = '/elBatan/api/v1/reportes';
+
   listarVentas(): Observable<ReporteVentaDTO[]> {
     return this.http.get<ReporteVentaDTO[]>(
-      '/api/v1/reportes/ventas'
+      `${this.apiUrl}/ventas`
     );
   }
 
@@ -27,25 +29,24 @@ export class ReporteService {
   ): Observable<ResumenVentasDTO> {
 
     return this.http.get<ResumenVentasDTO>(
-      '/api/v1/reportes/resumen',
+      `${this.apiUrl}/resumen`,
       {
-        params: {
-          inicio: inicio,
-          fin: fin
-        }
+        params: { inicio, fin }
       }
     );
   }
 
-  obtenerParticipacionProductos(): Observable<ParticipacionProductoDTO[]> {
+  obtenerParticipacionProductos():
+    Observable<ParticipacionProductoDTO[]> {
+
     return this.http.get<ParticipacionProductoDTO[]>(
-      '/api/v1/reportes/participacion-productos'
+      `${this.apiUrl}/participacion-productos`
     );
   }
-  
+
   listarUsuarios(): Observable<ReporteUsuarioDTO[]> {
-  return this.http.get<ReporteUsuarioDTO[]>(
-    '/api/v1/reportes/usuarios'
-  );
-}
+    return this.http.get<ReporteUsuarioDTO[]>(
+      `${this.apiUrl}/usuarios`
+    );
+  }
 }

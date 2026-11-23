@@ -8,8 +8,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
-public class ParticipacionProductoServiceImpl
-        implements ParticipacionProductoService {
+public class ParticipacionProductoServiceImpl implements ParticipacionProductoService {
 
     private final ParticipacionProductoRepository repository;
 
