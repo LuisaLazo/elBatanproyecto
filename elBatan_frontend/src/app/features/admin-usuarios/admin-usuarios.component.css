@@ -1,0 +1,243 @@
+
+/* =====================================
+   CONTENEDOR GENERAL
+===================================== */
+
+.gestion-usuarios {
+  color: #254832;
+}
+
+/* =====================================
+   ENCABEZADO
+===================================== */
+
+.icono-titulo {
+  display: grid;
+  place-items: center;
+  width: 55px;
+  height: 55px;
+  flex-shrink: 0;
+  border-radius: 15px;
+  background: #254832;
+  color: #ffffff;
+  font-size: 25px;
+}
+
+/* =====================================
+   BUSCADOR
+===================================== */
+
+.input-group-text {
+  background: #f0f5f0;
+  color: #254832;
+  border-color: #cedbd0;
+}
+
+.form-control:focus {
+  border-color: #d1a674;
+  box-shadow: 0 0 0 3px rgba(209, 166, 116, .18);
+}
+
+/* =====================================
+   TABLA
+===================================== */
+
+.tabla-contenedor {
+  border: 1px solid #e0e7df;
+  border-radius: 12px;
+  overflow-x: auto;
+  box-shadow: 0 5px 20px rgba(37, 72, 50, .07);
+}
+
+.tabla-contenedor thead th {
+  background: #edf3ee;
+  color: #254832;
+  padding: 14px;
+  font-size: 13px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.tabla-contenedor tbody td {
+  padding: 13px 14px;
+  vertical-align: middle;
+}
+
+.tabla-contenedor tbody tr:hover {
+  background: #f5f9f5;
+}
+
+/* =====================================
+   ETIQUETAS DE ROLES
+===================================== */
+
+.rol-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 7px 12px;
+  border-radius: 30px;
+  font-size: 12px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.rol-badge i {
+  font-size: 15px;
+}
+
+/* ADMIN */
+.rol-admin {
+  color: #78501b;
+  background: #f5e9d6;
+}
+
+/* REPARTIDOR */
+.rol-repartidor {
+  color: #246b42;
+  background: #e2f1e6;
+}
+
+/* CLIENTE */
+.rol-cliente {
+  color: #315f9b;
+  background: #e8eef9;
+}
+
+/* =====================================
+   BOTONES PARA CAMBIAR ROLES
+===================================== */
+
+.acciones-rol {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.btn-rol {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+
+  min-height: 38px;
+  padding: 8px 13px;
+
+  border: 1px solid transparent;
+  border-radius: 10px;
+
+  font-size: 13px;
+  font-weight: 600;
+  white-space: nowrap;
+
+  cursor: pointer;
+
+  transition:
+    background-color .2s ease,
+    transform .2s ease,
+    box-shadow .2s ease;
+}
+
+.btn-rol i {
+  font-size: 17px;
+}
+
+/* BOTÓN REPARTIDOR */
+.btn-repartidor {
+  background: #254832;
+  color: #ffffff;
+  border-color: #254832;
+}
+
+.btn-repartidor:not(:disabled):hover {
+  background: #356548;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(37, 72, 50, .22);
+}
+
+/* BOTÓN CLIENTE */
+.btn-cliente {
+  background: #fffaf3;
+  color: #254832;
+  border-color: #d1a674;
+}
+
+.btn-cliente:not(:disabled):hover {
+  background: #f5e6d2;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(209, 166, 116, .2);
+}
+
+/* BOTONES DESHABILITADOS */
+.btn-rol:disabled {
+  opacity: .45;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+/* ACCESIBILIDAD */
+.btn-rol:focus-visible {
+  outline: 3px solid #d1a674;
+  outline-offset: 3px;
+}
+
+/* =====================================
+   ADMINISTRADOR PROTEGIDO
+===================================== */
+
+.admin-protegido {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  color: #777;
+  font-size: 13px;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+/* =====================================
+   ESTADO DE CARGA
+===================================== */
+
+.cargando-usuarios {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 20px 0;
+  color: #47654f;
+}
+
+/* =====================================
+   RESPONSIVE
+===================================== */
+
+@media (max-width: 768px) {
+
+  .acciones-rol {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .btn-rol {
+    width: 100%;
+  }
+
+  .icono-titulo {
+    width: 48px;
+    height: 48px;
+    font-size: 22px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .btn-rol {
+    transition: none;
+  }
+
+  .btn-repartidor:not(:disabled):hover,
+  .btn-cliente:not(:disabled):hover {
+    transform: none;
+  }
+}
