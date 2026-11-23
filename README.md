@@ -1,5 +1,5 @@
 
-# EL BATÁN S.A.C. 🍗
+| EL BATÁN S.A.C. |
 ### Sistema de Gestión de Restaurante, Pedidos y Delivery
 
 Repositorio del proyecto académico **EL BATÁN S.A.C.**, desarrollado para el curso de Análisis y Diseño de Sistemas.
