@@ -1,177 +1,61 @@
-<nav class="navbar navbar-expand-xl bg-batan-primary px-3 px-lg-5" data-bs-theme="dark"
-  aria-label="Navegación principal">
-
+<nav class="navbar navbar-expand-xl bg-batan-primary px-3 px-lg-5"
+     data-bs-theme="dark" aria-label="Navegación principal">
   <div class="container-fluid px-0">
-
-    <!-- LOGO -->
-    <a class="navbar-brand d-flex align-items-center py-0" routerLink="/home" aria-label="Inicio de El Batán">
-
-      <img class="brand-logo" src="logo-el-batan-transparente.png" alt="El Batán, restaurante y pollería" width="144"
-        height="96">
-
+    <a class="navbar-brand d-flex align-items-center py-0"
+       routerLink="/home" aria-label="Inicio de El Batán">
+      <img class="brand-logo" src="logo-el-batan-transparente.png"
+           alt="El Batán, restaurante y pollería" width="144" height="96">
     </a>
 
-    <!-- CARRITO -->
-    @if (!sesionIniciada || esCliente || esRepartidor) {
-
     <div class="d-flex align-items-center gap-3 order-xl-last ms-auto">
-
       <a class="nav-link cart-link position-relative" routerLink="/carrito"
-        [attr.aria-label]="'Carrito, ' + cartService.totalItems() + ' productos'">
-
+         [attr.aria-label]="'Carrito, ' + cartService.totalItems() + ' productos distintos'">
         <i class="bi bi-bag fs-4" aria-hidden="true"></i>
-
         @if (cartService.totalItems() > 0) {
-
-        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill cart-count"
-          aria-hidden="true">
-
-          {{ cartService.totalItems() }}
-
-        </span>
-
+          <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill cart-count"
+                aria-hidden="true">
+            {{ cartService.totalItems() }}
+          </span>
         }
-
       </a>
-
     </div>
 
-    }
-
-    <!-- MENÚ PRINCIPAL -->
     <div class="navbar-collapse" id="batanNavigation">
-
       <ul class="navbar-nav mx-auto gap-xl-4 gap-xxl-5 py-3 py-xl-0">
-
-        <!-- INICIO -->
-        <li class="nav-item">
-          <a class="nav-link" routerLink="/home" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
-            Inicio
-          </a>
-        </li>
-
-        <!-- NUESTRA CARTA -->
-        <li class="nav-item">
-          <a class="nav-link" routerLink="/home" fragment="carta">
-            Nuestra carta
-          </a>
-        </li>
-
-        <!-- SOBRE NOSOTROS -->
-        <li class="nav-item">
-          <a class="nav-link" routerLink="/home" fragment="sobre-nosotros">
-            Sobre nosotros
-          </a>
-        </li>
-
-        <!-- UBICACIÓN -->
-        <li class="nav-item">
-          <a class="nav-link" routerLink="/home" fragment="ubicacion">
-            Ubicación
-          </a>
-        </li>
-
-        <!-- ================================= -->
-        <!-- CLIENTE -->
-        <!-- ================================= -->
-
-        @if (esCliente || esRepartidor) {
-        <li class="nav-item">
-          <a class="nav-link" routerLink="/mis-pedidos" routerLinkActive="active">
-            Mis pedidos
-          </a>
-        </li>
-        }
-
-        <!-- ================================= -->
-        <!-- REPARTIDOR -->
-        <!-- ================================= -->
-
-        @if (esRepartidor) {
-
-        <li class="nav-item">
-
-          <a class="nav-link" routerLink="/repartidor" routerLinkActive="active">
-
-            <i class="bi bi-truck me-1" aria-hidden="true"></i>
-
-            Pedidos disponibles
-
-          </a>
-
-        </li>
-
-        }
-
-        <!-- ================================= -->
-        <!-- ADMINISTRADOR -->
-        <!-- ================================= -->
-
-        @if (esAdmin) {
-
-        <li class="nav-item">
-          <a class="nav-link" routerLink="/productos" routerLinkActive="active">
-            Gestión de productos
-          </a>
-        </li>
-
-        <li class="nav-item">
-          <a class="nav-link" routerLink="/admin/pedidos" routerLinkActive="active">
-            Gestión de pedidos
-          </a>
-        </li>
-
-        <li class="nav-item">
-          <a class="nav-link" routerLink="/admin/reportes" routerLinkActive="active">
-            Reportes
-          </a>
-        </li>
-
-        <li class="nav-item">
-          <a class="nav-link" routerLink="/admin/usuarios" routerLinkActive="active">
-            Gestión de usuarios
-          </a>
-        </li>
-
-        }
-
-        <!-- ================================= -->
-        <!-- SESIÓN -->
-        <!-- ================================= -->
+        <li class="nav-item"><a class="nav-link" routerLink="/home">Inicio</a></li>
+        <li class="nav-item"><a class="nav-link" routerLink="/home" fragment="carta">Nuestra carta</a></li>
+        <li class="nav-item"><a class="nav-link" routerLink="/home" fragment="sobre-nosotros">Sobre nosotros</a></li>
+        <li class="nav-item"><a class="nav-link" routerLink="/home" fragment="ubicacion">Ubicación</a></li>
 
         @if (sesionIniciada) {
-
-        <li class="nav-item">
-
-          <button type="button" class="nav-link" (click)="cerrarSesion()">
-
-            <i class="bi bi-box-arrow-right me-1" aria-hidden="true"></i>
-
-            Cerrar sesión
-
-          </button>
-
-        </li>
-
-        } @else {
-
-        <li class="nav-item">
-
-          <button type="button" class="nav-link" (click)="abrirAcceso.emit()">
-
-            <i class="bi bi-person-circle me-1" aria-hidden="true"></i>
-
-            Iniciar sesión
-
-          </button>
-
-        </li>
-
+          <li class="nav-item">
+            <a class="nav-link" routerLink="/mis-pedidos">Mis pedidos</a>
+          </li>
         }
 
+        @if (esAdmin) {
+          <li class="nav-item">
+            <a class="nav-link" routerLink="/productos">Gestión de productos</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" routerLink="/admin/pedidos">Gestión de pedidos</a>
+          </li>
+        }
+
+        @if (sesionIniciada) {
+          <li class="nav-item">
+            <button type="button" class="nav-link" (click)="cerrarSesion()">
+              Cerrar sesión
+            </button>
+          </li>
+        } @else {
+          <li class="nav-item">
+            <a class="nav-link" href="/login" (click)="solicitarAcceso($event)">
+              Iniciar sesión
+            </a>
+          </li>
+        }
       </ul>
-
     </div>
-
   </div>
 </nav>
