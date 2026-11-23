@@ -1,0 +1,217 @@
+
+<section class="container py-4 gestion-usuarios">
+
+  <!-- ENCABEZADO -->
+  <div class="d-flex align-items-center gap-3 mb-4">
+
+    <div class="icono-titulo">
+      <i class="bi bi-people-fill" aria-hidden="true"></i>
+    </div>
+
+    <div>
+      <h2 class="mb-1">Gestión de usuarios</h2>
+      <p class="text-muted mb-0">
+        Busca usuarios y administra sus roles.
+      </p>
+    </div>
+
+  </div>
+
+  <!-- BUSCADOR -->
+  <div class="mb-3">
+    <label for="buscarUsuario" class="form-label fw-semibold">
+      Buscar usuario
+    </label>
+
+    <div class="input-group">
+      <span class="input-group-text">
+        <i class="bi bi-search" aria-hidden="true"></i>
+      </span>
+
+      <input
+        id="buscarUsuario"
+        type="text"
+        class="form-control"
+        [(ngModel)]="busqueda"
+        placeholder="Nombre, usuario o rol"
+      />
+    </div>
+  </div>
+
+  <!-- ACTUALIZAR -->
+  <button
+    type="button"
+    class="btn btn-outline-success mb-3"
+    [disabled]="cargando || guardando"
+    (click)="cargar()">
+
+    <i class="bi bi-arrow-clockwise me-2" aria-hidden="true"></i>
+    Actualizar usuarios
+  </button>
+
+  <!-- MENSAJES -->
+  <div
+    *ngIf="error"
+    class="alert alert-danger"
+    role="alert">
+    {{ error }}
+  </div>
+
+  <div
+    *ngIf="mensaje"
+    class="alert alert-success"
+    role="status">
+    {{ mensaje }}
+  </div>
+
+  <!-- CARGANDO -->
+  <div *ngIf="cargando" class="cargando-usuarios" role="status">
+    <span
+      class="spinner-border spinner-border-sm text-success"
+      aria-hidden="true">
+    </span>
+    Cargando usuarios...
+  </div>
+
+  <!-- TABLA -->
+  <div
+    class="table-responsive tabla-contenedor"
+    *ngIf="!cargando">
+
+    <table class="table table-striped align-middle mb-0">
+
+      <thead>
+        <tr>
+          <th scope="col">ID</th>
+          <th scope="col">Nombre</th>
+          <th scope="col">Usuario</th>
+          <th scope="col">Rol actual</th>
+          <th scope="col">Acciones</th>
+        </tr>
+      </thead>
+
+      <tbody>
+
+        <tr *ngFor="let u of filtrados">
+
+          <!-- ID -->
+          <td class="text-muted">
+            #{{ u.idUsuario }}
+          </td>
+
+          <!-- NOMBRE -->
+          <td class="fw-semibold">
+            {{ u.nombre }}
+          </td>
+
+          <!-- USUARIO -->
+          <td>{{ u.usuario }}</td>
+
+          <!-- ROL ACTUAL -->
+          <td>
+            <span
+              class="rol-badge"
+              [ngClass]="{
+                'rol-admin': u.rol === 'ADMIN',
+                'rol-repartidor': u.rol === 'REPARTIDOR',
+                'rol-cliente': u.rol === 'CLIENTE'
+              }">
+
+              <i
+                class="bi"
+                aria-hidden="true"
+                [ngClass]="{
+                  'bi-shield-lock-fill': u.rol === 'ADMIN',
+                  'bi-truck': u.rol === 'REPARTIDOR',
+                  'bi-person-fill': u.rol === 'CLIENTE'
+                }">
+              </i>
+
+              {{ u.rol }}
+            </span>
+          </td>
+
+          <!-- CAMBIAR ROL -->
+          <td>
+
+            <ng-container
+              *ngIf="u.rol !== 'ADMIN'; else adminProtegido">
+
+              <div class="acciones-rol">
+
+                <!-- BOTÓN REPARTIDOR -->
+                <button
+                  type="button"
+                  class="btn-rol btn-repartidor"
+                  [disabled]="guardando || u.rol === 'REPARTIDOR'"
+                  [attr.aria-label]="'Asignar rol repartidor a ' + u.usuario"
+                  (click)="cambiarRol(u, 'REPARTIDOR')">
+
+                  <i
+                    class="bi bi-truck"
+                    aria-hidden="true">
+                  </i>
+
+                  <span>
+                    {{ u.rol === 'REPARTIDOR'
+                      ? 'Repartidor actual'
+                      : 'Hacer repartidor' }}
+                  </span>
+                </button>
+
+                <!-- BOTÓN CLIENTE -->
+                <button
+                  type="button"
+                  class="btn-rol btn-cliente"
+                  [disabled]="guardando || u.rol === 'CLIENTE'"
+                  [attr.aria-label]="'Asignar rol cliente a ' + u.usuario"
+                  (click)="cambiarRol(u, 'CLIENTE')">
+
+                  <i
+                    class="bi bi-person-check"
+                    aria-hidden="true">
+                  </i>
+
+                  <span>
+                    {{ u.rol === 'CLIENTE'
+                      ? 'Cliente actual'
+                      : 'Hacer cliente' }}
+                  </span>
+                </button>
+
+              </div>
+
+            </ng-container>
+
+            <!-- ADMINISTRADOR PROTEGIDO -->
+            <ng-template #adminProtegido>
+              <span class="admin-protegido">
+                <i
+                  class="bi bi-lock-fill me-1"
+                  aria-hidden="true">
+                </i>
+                Administrador protegido
+              </span>
+            </ng-template>
+
+          </td>
+        </tr>
+
+        <!-- SIN RESULTADOS -->
+        <tr *ngIf="filtrados.length === 0">
+          <td
+            colspan="5"
+            class="text-center text-muted py-4">
+
+            <i class="bi bi-search me-2" aria-hidden="true"></i>
+            No se encontraron usuarios.
+
+          </td>
+        </tr>
+
+      </tbody>
+
+    </table>
+  </div>
+
+</section>

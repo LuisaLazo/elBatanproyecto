@@ -30,6 +30,12 @@ export class HeaderComponent {
     const roles = localStorage.getItem('elBatan.roles') ?? '';
     return this.sesionIniciada && roles.split(',').includes('ADMIN');
   }
+  get esRepartidor(): boolean {
+  const roles = localStorage.getItem('elBatan.roles') ?? '';
+
+  return this.sesionIniciada &&
+    roles.split(',').map(rol => rol.trim()).includes('REPARTIDOR');
+}
 
   solicitarAcceso(evento: MouseEvent): void {
     if (evento.ctrlKey || evento.metaKey || evento.shiftKey || evento.altKey) return;
