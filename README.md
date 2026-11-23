@@ -32,7 +32,7 @@ El sistema tiene como objetivo digitalizar y mejorar la gestión de pedidos, pro
 - IntelliJ IDEA
 - Visual Studio Code
 - Git y GitHub
-- Postman / Swagger
+- Swagger
 
 ## Ramas de trabajo
 
@@ -192,7 +192,7 @@ Desarrollar un sistema web para EL BATÁN S.A.C. que permita optimizar la atenci
 
 **Empresa:** EL BATÁN S.A.C.
 
-**Curso:** Análisis y Diseño de Sistemas.
+**Curso:** Análisis y Diseño de Sistemas, Base de Datos 2 y LP2
 
 **Institución:** Universidad Peruana Unión (UPeU).
 
