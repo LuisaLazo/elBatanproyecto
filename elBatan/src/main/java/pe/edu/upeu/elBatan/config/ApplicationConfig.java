@@ -20,25 +20,25 @@ public class ApplicationConfig {
     public ApplicationConfig(UsuarioRepository usuarioRepository) {
         this.usuarioRepository = usuarioRepository;
     }
-    @Bean
+    @Bean // BEAN - Servicios.DETALLES
     public UserDetailsService userDetailsService(){
         return  username -> usuarioRepository.findByUsuario(username)
                 .map(UsuarioPrincipal::new)
                 .orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado"));
     }
-    @Bean
+    @Bean // BEAN-AuthenticationProvider
     public AuthenticationProvider authenticationProvider(){
         DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
         authProvider.setUserDetailsService(userDetailsService());
         authProvider.setPasswordEncoder(passwordEncoder());
         return authProvider;
     }
-    @Bean
+    @Bean // BEAN - AuthenticationManager
     public AuthenticationManager authenticationManager (AuthenticationConfiguration config) throws Exception{
         return config.getAuthenticationManager();
     }
 
-    @Bean
+    @Bean // BEAN - PASSWORDEncoder
     public PasswordEncoder passwordEncoder(){
         return new BCryptPasswordEncoder();
     }

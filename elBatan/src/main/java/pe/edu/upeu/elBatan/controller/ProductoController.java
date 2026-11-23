@@ -29,6 +29,7 @@ public class ProductoController {
         this.fileStorageService = fileStorageService;
     }
 
+    // PROCESO-GetMapping-LISTAR + RETORNO DE RESPUESTA POR ENTIDAD
     @GetMapping
     public ResponseEntity<List<ProductoDTO>> listar() {
         return ResponseEntity.ok(productoService.listarTodo());
@@ -43,6 +44,7 @@ public class ProductoController {
                 ));
     }
 
+    // PROCESO-PostMapping-PARTE.MULTIPART
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<ProductoDTO> crear(
             @ModelAttribute @ParameterObject @Valid ProductoDTO dto,
@@ -52,6 +54,7 @@ public class ProductoController {
                 ? fileStorageService.store(file)
                 : "no-image.png";
 
+        // VALORES POR IMAGEN
         ProductoDTO productoConImagen = new ProductoDTO(
                 null,
                 dto.nombre(),
@@ -65,6 +68,7 @@ public class ProductoController {
                 .body(productoService.crear(productoConImagen));
     }
 
+    // PROCESO - PutMapping-MULTIPART, ID.CONSUME
     @PutMapping(value = "/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<ProductoDTO> actualizar(
             @PathVariable Long id,
@@ -98,6 +102,7 @@ public class ProductoController {
         }
     }
 
+    // PROCESO-DELETEMapping-ID.ELIMINAR
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> eliminar(@PathVariable Long id) {
         if (productoService.eliminar(id)) {

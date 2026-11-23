@@ -26,13 +26,13 @@ export class HomeComponent implements OnInit {
       imagen: 'pollo-a-la-brasa.webp',
       posicion: 'center 53%',
       titulo: 'Pollo a la brasa',
-      descripcion: 'Con papas fritas y ensalada.'
+      descripcion: 'Disfruta del mejor pollo a la brasa de la ciudad'
     },
     {
       imagen: 'pizza-para-compartir.jpg',
       posicion: 'center',
-      titulo: 'Pizza para compartir',
-      descripcion: 'Una opción para disfrutar en la mesa.'
+      titulo: 'Combos para compartir',
+      descripcion: 'Elige tu combo favorito para compartir'
     }
   ];
   destacadoActual = 0;

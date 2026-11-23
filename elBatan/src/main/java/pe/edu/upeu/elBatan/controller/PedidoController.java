@@ -40,6 +40,7 @@ public class PedidoController {
 
 
 
+    // PROCESO - PostMapping.RESPUESTA-ENTIDAD
     @PostMapping
     public ResponseEntity<PedidoResponseDTO> crearPedido(
             @Valid @RequestBody VentaDTO dto, Principal principal) {
@@ -47,31 +48,32 @@ public class PedidoController {
         PedidoResponseDTO pedido = pedidoService.realizarPedido(idPersona, dto);
         return ResponseEntity.status(HttpStatus.CREATED).body(pedido);
     }
-
+    // PROCESO - GETMapping.LISTADO.ONLYPedidos
     @GetMapping("/mios")
     public ResponseEntity<List<PedidoResponseDTO>> listarMisPedidos(Principal principal) {
         Long idPersona = idPersonaAutenticada(principal);
         return ResponseEntity.ok(pedidoService.listarPorCliente(idPersona));
     }
-
+    // PROCESO - GETMapping.ListarTodo
     @GetMapping
     public ResponseEntity<List<PedidoResponseDTO>> listarTodo() {
         return ResponseEntity.ok(pedidoService.listarTodo());
     }
-
+    // PROCESO - GETMapping.BúsquedaPorID
     @GetMapping("/{id}")
     public ResponseEntity<PedidoResponseDTO> buscarPorId(@PathVariable Long id) {
         return pedidoService.buscarPorId(id)
                 .map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
-
+    // PROCESO - GETMapping.LISTADO-ESTADO
     @GetMapping("/estado/{estado}")
     public ResponseEntity<List<PedidoResponseDTO>> listarPorEstado(
             @PathVariable Estado estado) {
         return ResponseEntity.ok(pedidoService.listarPorEstado(estado));
     }
 
+    // PROCESO - PUTMapping.ACTUALIZAR.ESTADO
     @PutMapping("/{id}/estado")
     public ResponseEntity<PedidoResponseDTO> actualizarEstado(
             @PathVariable Long id, @RequestParam String estado) {
@@ -79,7 +81,7 @@ public class PedidoController {
                 .map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
-
+    // PROCESO - DELETEMapping.ELMINAR
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> eliminar(@PathVariable Long id) {
         if (pedidoService.eliminar(id)) {
@@ -88,7 +90,7 @@ public class PedidoController {
 
         return ResponseEntity.notFound().build();
     }
-
+    // CLASE PRIVADA-AUTHENTIFICATION-IDPersona
     private Long idPersonaAutenticada(Principal principal) {
         return usuarioRepository.findByUsuario(principal.getName())
                 .map(Usuario::getPersona)
@@ -98,7 +100,7 @@ public class PedidoController {
                         "La cuenta no tiene una persona asociada"));
     }
 
-
+    // PROCESO | GETMapping-EVIDENCIA.ID
     @GetMapping(
             value = "/{id}/evidencia",
             produces = {
@@ -106,6 +108,7 @@ public class PedidoController {
                     MediaType.IMAGE_PNG_VALUE
             }
     )
+    // CLASE PÚBLICA PARA VISUALIZAR EVIDENCIA POR LA CANTIDAD DE RESPUESTA DE ENTIDAD
     public ResponseEntity<byte[]> visualizarEvidencia(
             @PathVariable Long id,
             Principal principal

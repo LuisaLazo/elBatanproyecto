@@ -21,6 +21,7 @@ public class JwtService {
     @Value("${security.jwt.secret-key}")
     private String secretKey;
 
+    // EVALÚA EL TIEMPO DE EXPIRACIÓN-SECURITY
     @Value("${security.jwt.expiration-time}")
     private long jwtExpiration;
 
@@ -41,6 +42,7 @@ public class JwtService {
         return generateToken(extraClaims, userDetails);
     }
 
+    // MAPEA - USA DETALLES Y GENERA TOKEN
     public String generateToken(Map<String,Object> extraClaims, UserDetails userDetails){
         return buildToken(extraClaims,userDetails,jwtExpiration);
     }

@@ -17,6 +17,7 @@ public record UsuarioPrincipal(Usuario usuario) implements UserDetails {
                 .toList();
     }
 
+    // MÉTODOS DE USUARIOS GENERALES
     @Override
     public String getPassword() {
         return usuario.getPassword();
