@@ -182,11 +182,17 @@ Cada integrante debe:
 
 Desarrollar un sistema web para EL BATÁN S.A.C. que permita optimizar la atención al cliente, administrar productos, registrar pedidos, controlar existencias y organizar el servicio de delivery.
 
+Nombres de los miembros del grupo:
+- Cristofer Alexander Meléndez Rodriguez
+- Luisa Génesis Lazo Rengifo
+- Adrián Robert Ruiz Rivera
+- James Alfredo Ríos Saavedra
+
 ## Proyecto académico
 
 **Empresa:** EL BATÁN S.A.C.
 
-**Curso:** Análisis y Diseño de Sistemas, Base de Datos 2 y LP2
+**Curso:** Análisis y Diseño de Sistemas, Base de Datos 2 y LP2 (LENGUAJE DE PROGRAMACIÓN-02)
 
 **Institución:** Universidad Peruana Unión (UPeU).
 
