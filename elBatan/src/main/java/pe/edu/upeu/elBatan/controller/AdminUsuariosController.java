@@ -22,6 +22,7 @@ public class AdminUsuariosController {
 
     public record CambioRolRequest(String rol) {}
 
+    // PROCESO - PutMapping | idROL
     @PutMapping("/{id}/rol")
     @Transactional
     public Map<String, Object> cambiarRol(
@@ -68,6 +69,7 @@ public class AdminUsuariosController {
             );
         }
 
+        // OBJETO - MAYOR MANEJO.VIA-ADMIN
         Integer administradores = jdbc.queryForObject(
                 """
                 SELECT COUNT(*)

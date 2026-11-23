@@ -30,6 +30,7 @@ public class AuthController {
     private final UsuarioRepository usuarioRepository;
     private final JwtService jwtService;
 
+    // CONTROLADOR PÚBLICO
     public AuthController(IUsuarioService usuarioService, AuthenticationManager authenticationManager, UsuarioRepository usuarioRepository, JwtService jwtService) {
         this.usuarioService = usuarioService;
         this.authenticationManager = authenticationManager;
@@ -37,6 +38,7 @@ public class AuthController {
         this.jwtService = jwtService;
     }
 
+    // PROCESO - PostMapping.REGISTRO
     @PostMapping("/registro")
     public ResponseEntity<UsuarioDTO> register(@Valid @RequestBody RegistroDTO dto){
         return usuarioService.registrarCliente(dto)
@@ -44,7 +46,7 @@ public class AuthController {
                 .orElseThrow(()-> new RuntimeException("El email o nombre del usuario ya esta en uso"));
 
     }
-
+    // PROCESO - PostMapping.LOGIN
     @PostMapping("/login")
     public ResponseEntity<AuthResponse> login(@Valid @RequestBody LoginRequest request) {
         authenticationManager.authenticate(

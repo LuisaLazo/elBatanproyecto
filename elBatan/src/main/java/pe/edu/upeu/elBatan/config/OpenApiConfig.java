@@ -13,6 +13,8 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class OpenApiConfig {
 
+    // SpringBoot - Swagger
+    // API INTEGRADA - INICIALIZACIÓN
     @Bean
     public OpenAPI customOpenAPI() {
         return new OpenAPI()

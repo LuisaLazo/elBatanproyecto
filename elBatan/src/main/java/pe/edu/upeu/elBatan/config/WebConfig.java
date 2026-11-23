@@ -12,7 +12,7 @@ public class WebConfig implements WebMvcConfigurer {
     private String storageLocation;
 
     // 1. Configuración para las IMÁGENES
-
+    // RECURSOS - STORAGE.REGISTRO
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         String location = java.nio.file.Paths.get(storageLocation)
@@ -26,6 +26,7 @@ public class WebConfig implements WebMvcConfigurer {
     }
 
     // 2. Configuración para CORS (Conexión con Angular)
+    // REGISTRO - CONEXIÓN DIRECTA
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**") // Permitimos todo: /api/** e /images/**

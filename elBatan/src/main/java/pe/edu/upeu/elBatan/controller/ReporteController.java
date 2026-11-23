@@ -33,6 +33,7 @@ public class ReporteController {
         this.reporteUsuarioService = reporteUsuarioService;
     }
 
+    // PROCESO - GETMapping-ListarVentas-REPORTE
     @GetMapping("/ventas")
     public List<ReporteVentaDTO> listarVentas() {
         return reporteService.listarVentas();
@@ -50,12 +51,12 @@ public class ReporteController {
     ) {
         return resumenVentasService.obtenerResumen(inicio, fin);
     }
-
+    // PROCESO - GETMapping-ListadoParticipación-PRODUCTOS
     @GetMapping("/participacion-productos")
     public ResponseEntity<List<ParticipacionProductoDTO>> listarParticipacionProductos() {
         return ResponseEntity.ok(participacionProductoService.listar());
     }
-
+    // PROCESO - GETMapping-REPORTEUSUARIO-ListadoUsuario
     @GetMapping("/usuarios")
     public ResponseEntity<List<ReporteUsuarioDTO>> listarUsuarios() {
         return ResponseEntity.ok(reporteUsuarioService.listar());
