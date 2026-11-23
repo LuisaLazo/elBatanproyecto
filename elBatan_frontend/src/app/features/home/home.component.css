@@ -1,21 +1,121 @@
-/* Imagen principal */
+/* Carrusel de platos */
 .cover {
-  display: flex;
-  justify-content: center;
-  padding: 24px 16px;
+  padding: clamp(1rem, 3vw, 2rem);
   background: #f4f1ea;
 }
 
-.cover img {
-  display: block;
-  width: auto;
-  max-width: 100%;
-  height: auto;
-  max-height: 65vh;
-  object-fit: contain;
-  object-position: center;
-  border-radius: 16px;
-  box-shadow: 0 8px 24px rgb(0 0 0 / 12%);
+.cover-frame {
+  position: relative;
+  max-width: 74rem;
+  margin-inline: auto;
+  overflow: hidden;
+  border-radius: clamp(.85rem, 2vw, 1.45rem);
+  background: #251c16;
+  color: #fff8ec;
+  box-shadow: 0 .7rem 2rem rgb(37 28 22 / 18%);
+}
+
+.cover-slide {
+  position: relative;
+  display: grid;
+  min-height: clamp(26rem, 44vw, 36rem);
+  align-items: center;
+  isolation: isolate;
+}
+
+.cover-photo,
+.cover-slide::after {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.cover-photo {
+  z-index: -2;
+  object-fit: cover;
+}
+
+.cover-slide::after {
+  z-index: -1;
+  content: '';
+  background: linear-gradient(90deg, rgb(28 17 10 / 94%), rgb(28 17 10 / 70%) 37%, transparent 80%);
+}
+
+.cover-copy {
+  padding: clamp(1.35rem, 6vw, 5rem);
+  padding-bottom: max(5.5rem, 6vw);
+}
+
+.cover-copy h2 {
+  max-width: 10ch;
+  margin-bottom: .7rem;
+  font: 700 clamp(2.5rem, 6vw, 5rem) / .98 Georgia, serif;
+}
+
+.cover-copy p {
+  margin-bottom: 1.4rem;
+  font-size: clamp(1rem, 1.7vw, 1.2rem);
+}
+
+.cover-link {
+  display: inline-flex;
+  gap: .65rem;
+  align-items: center;
+  padding: .65rem 1rem;
+  border-radius: .55rem;
+  background: #ffdda9;
+  color: #302218;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.cover-link:hover {
+  background: #fff0d7;
+}
+
+.cover-controls {
+  position: absolute;
+  right: 1rem;
+  bottom: 1rem;
+  display: flex;
+  align-items: center;
+  gap: .5rem;
+  padding: .3rem;
+  border-radius: 999px;
+  background: #2f211a;
+  font-variant-numeric: tabular-nums;
+}
+
+.cover-controls button {
+  display: grid;
+  width: 2.75rem;
+  height: 2.75rem;
+  place-items: center;
+  border: 0;
+  border-radius: 50%;
+  background: #fff8ec;
+  color: #302218;
+}
+
+.cover-controls button:hover {
+  background: #ffdda9;
+}
+
+.cover-link:focus-visible,
+.cover-controls button:focus-visible {
+  outline: 2px solid #fff;
+  outline-offset: 3px;
+}
+
+@media (max-width: 575px) {
+  .cover-slide {
+    align-items: end;
+  }
+
+  .cover-slide::after {
+    background: linear-gradient(0deg, rgb(28 17 10 / 96%), rgb(28 17 10 / 75%) 44%, transparent 90%);
+  }
 }
 
 /* Nuestra carta */
@@ -127,7 +227,6 @@
     padding: 16px 12px;
   }
 
-  .cover img,
   .about-photo {
     border-radius: 10px;
   }

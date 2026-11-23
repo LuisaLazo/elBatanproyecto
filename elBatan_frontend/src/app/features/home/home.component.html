@@ -1,10 +1,37 @@
 <h1 class="visually-hidden">El Batán</h1>
 
-<div class="cover">
-  <img src="pollo-a-la-brasa.webp"
-       alt="Pollo a la brasa con papas fritas y ensalada"
-       width="1180" height="843" fetchpriority="high">
-</div>
+<section class="cover" aria-label="Platos destacados">
+  <div class="cover-frame">
+    <div class="cover-slide" aria-live="polite" aria-atomic="true">
+      <img class="cover-photo"
+           [src]="platoDestacado.imagen"
+           [style.object-position]="platoDestacado.posicion"
+           alt="" fetchpriority="high">
+
+      <div class="cover-copy">
+        <h2>{{ platoDestacado.titulo }}</h2>
+        <p>{{ platoDestacado.descripcion }}</p>
+
+        <a routerLink="/home" fragment="carta" class="cover-link">
+          Ver la carta
+          <i class="bi bi-arrow-down" aria-hidden="true"></i>
+        </a>
+      </div>
+    </div>
+
+    <div class="cover-controls" role="group" aria-label="Navegación del carrusel">
+      <button type="button" (click)="moverDestacado(-1)" aria-label="Plato anterior">
+        <i class="bi bi-chevron-left" aria-hidden="true"></i>
+      </button>
+
+      <span aria-hidden="true">{{ destacadoActual + 1 }} / {{ destacados.length }}</span>
+
+      <button type="button" (click)="moverDestacado(1)" aria-label="Siguiente plato">
+        <i class="bi bi-chevron-right" aria-hidden="true"></i>
+      </button>
+    </div>
+  </div>
+</section>
 
 <section id="carta" class="menu bg-white" aria-labelledby="carta-title">
   <div class="container">

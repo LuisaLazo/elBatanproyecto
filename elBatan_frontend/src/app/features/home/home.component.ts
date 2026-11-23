@@ -21,6 +21,31 @@ export class HomeComponent implements OnInit {
   productos: Producto[] = [];
   estado: 'cargando' | 'listo' | 'error' = 'cargando';
 
+  readonly destacados = [
+    {
+      imagen: 'pollo-a-la-brasa.webp',
+      posicion: 'center 53%',
+      titulo: 'Pollo a la brasa',
+      descripcion: 'Con papas fritas y ensalada.'
+    },
+    {
+      imagen: 'pizza-para-compartir.jpg',
+      posicion: 'center',
+      titulo: 'Pizza para compartir',
+      descripcion: 'Una opción para disfrutar en la mesa.'
+    }
+  ];
+  destacadoActual = 0;
+
+  get platoDestacado() {
+    return this.destacados[this.destacadoActual];
+  }
+
+  moverDestacado(paso: number): void {
+    this.destacadoActual =
+      (this.destacadoActual + paso + this.destacados.length) % this.destacados.length;
+  }
+
   ngOnInit(): void {
     this.cargarProductos();
 

@@ -1,5 +1,6 @@
 import { HttpClient } from '@angular/common/http';
-import { Component, inject } from '@angular/core';
+import { Component, DestroyRef, inject, input, output } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 
@@ -8,7 +9,7 @@ import { RouterLink } from '@angular/router';
   standalone: true,
   imports: [FormsModule, RouterLink],
   template: `
-    <section class="registro-page" aria-labelledby="registro-titulo">
+    <section class="registro-page" [class.en-modal]="enModal()" aria-labelledby="registro-titulo">
       <div class="registro-card">
         <header class="registro-header">
           <span class="registro-icono" aria-hidden="true">
@@ -20,9 +21,13 @@ import { RouterLink } from '@angular/router';
         <div class="registro-body">
           @if (creada) {
             <p class="alert alert-success" role="status">Tu cuenta fue creada.</p>
-            <a class="btn btn-registro w-100" routerLink="/login">
-              Iniciar sesión
-            </a>
+
+            @if (enModal()) {
+              <button type="button" class="btn btn-registro w-100"
+                      (click)="pedirLogin.emit()">Iniciar sesión</button>
+            } @else {
+              <a class="btn btn-registro w-100" routerLink="/login">Iniciar sesión</a>
+            }
           } @else {
             <form #formulario="ngForm" (ngSubmit)="registrar()">
               <div class="row g-3">
@@ -74,7 +79,13 @@ import { RouterLink } from '@angular/router';
             </form>
 
             <p class="registro-login">
-              ¿Ya tienes cuenta? <a routerLink="/login">Inicia sesión</a>
+              ¿Ya tienes cuenta?
+              @if (enModal()) {
+                <button type="button" class="btn btn-link p-0 link-success fw-bold"
+                        (click)="pedirLogin.emit()">Inicia sesión</button>
+              } @else {
+                <a routerLink="/login">Inicia sesión</a>
+              }
             </p>
           }
         </div>
@@ -91,13 +102,24 @@ import { RouterLink } from '@angular/router';
       padding: clamp(1.5rem, 5vw, 3.5rem) 1rem;
     }
 
+    .registro-page.en-modal {
+      padding: 0;
+    }
+
     .registro-card {
       width: min(100%, 620px);
       overflow: hidden;
       border: 1px solid var(--borde);
       border-radius: 1.25rem;
       background: #fff;
-      box-shadow: 0 12px 32px rgba(36, 56, 40, .10);
+      box-shadow: 0 12px 32px rgb(36 56 40 / 10%);
+    }
+
+    .en-modal .registro-card {
+      width: 100%;
+      border: 0;
+      border-radius: 0;
+      box-shadow: none;
     }
 
     .registro-header {
@@ -113,7 +135,7 @@ import { RouterLink } from '@angular/router';
       height: 2.75rem;
       margin-bottom: .65rem;
       place-items: center;
-      border: 1px solid rgba(255, 255, 255, .35);
+      border: 1px solid rgb(255 255 255 / 35%);
       border-radius: 50%;
       font-size: 1.35rem;
     }
@@ -141,7 +163,7 @@ import { RouterLink } from '@angular/router';
 
     .form-control:focus {
       border-color: var(--verde-batan);
-      box-shadow: 0 0 0 .2rem rgba(46, 83, 55, .18);
+      box-shadow: 0 0 0 .2rem rgb(46 83 55 / 18%);
     }
 
     .btn-registro {
@@ -183,6 +205,10 @@ import { RouterLink } from '@angular/router';
   `]
 })
 export class RegistroComponent {
+  readonly enModal = input(false);
+  readonly pedirLogin = output<void>();
+
+  private readonly destroyRef = inject(DestroyRef);
   private readonly http = inject(HttpClient);
 
   datos = {
@@ -211,7 +237,9 @@ export class RegistroComponent {
       direccion: this.datos.direccion.trim(),
       usuario: this.datos.usuario.trim(),
       password: this.datos.password
-    }).subscribe({
+    }).pipe(
+      takeUntilDestroyed(this.destroyRef)
+    ).subscribe({
       next: () => {
         this.enviando = false;
         this.creada = true;

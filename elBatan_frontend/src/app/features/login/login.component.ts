@@ -1,4 +1,5 @@
-import { Component, inject } from '@angular/core';
+import { Component, DestroyRef, inject, input, output } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../core/services/auth.service';
@@ -8,7 +9,7 @@ import { AuthService } from '../../core/services/auth.service';
   standalone: true,
   imports: [FormsModule, RouterLink],
   template: `
-    <section class="login-page" aria-labelledby="login-titulo">
+    <section class="login-page" [class.en-modal]="enModal()" aria-labelledby="login-titulo">
       <div class="login-card">
         <header class="login-header">
           <span class="login-icon" aria-hidden="true">
@@ -47,7 +48,12 @@ import { AuthService } from '../../core/services/auth.service';
 
           <p class="login-registro">
             ¿Todavía no tienes cuenta?
-            <a routerLink="/registro">Crear cuenta</a>
+            @if (enModal()) {
+              <button type="button" class="btn btn-link p-0 link-success fw-bold"
+                      (click)="pedirRegistro.emit()">Crear cuenta</button>
+            } @else {
+              <a routerLink="/registro">Crear cuenta</a>
+            }
           </p>
         </div>
       </div>
@@ -62,13 +68,24 @@ import { AuthService } from '../../core/services/auth.service';
       padding: clamp(2rem, 5vw, 4rem) 1rem;
     }
 
+    .login-page.en-modal {
+      padding: 0;
+    }
+
     .login-card {
       width: min(100%, 440px);
       overflow: hidden;
       border: 1px solid var(--borde);
       border-radius: 1.25rem;
       background: #fff;
-      box-shadow: 0 12px 32px rgba(36, 56, 40, .10);
+      box-shadow: 0 12px 32px rgb(36 56 40 / 10%);
+    }
+
+    .en-modal .login-card {
+      width: 100%;
+      border: 0;
+      border-radius: 0;
+      box-shadow: none;
     }
 
     .login-header {
@@ -84,7 +101,7 @@ import { AuthService } from '../../core/services/auth.service';
       height: 2.75rem;
       margin-bottom: .65rem;
       place-items: center;
-      border: 1px solid rgba(255, 255, 255, .35);
+      border: 1px solid rgb(255 255 255 / 35%);
       border-radius: 50%;
       font-size: 1.35rem;
     }
@@ -112,7 +129,7 @@ import { AuthService } from '../../core/services/auth.service';
 
     .form-control:focus {
       border-color: var(--verde-batan);
-      box-shadow: 0 0 0 .2rem rgba(46, 83, 55, .18);
+      box-shadow: 0 0 0 .2rem rgb(46 83 55 / 18%);
     }
 
     .login-submit {
@@ -151,6 +168,11 @@ import { AuthService } from '../../core/services/auth.service';
   `]
 })
 export class LoginComponent {
+  readonly enModal = input(false);
+  readonly pedirRegistro = output<void>();
+  readonly sesionConfirmada = output<void>();
+
+  private readonly destroyRef = inject(DestroyRef);
   private readonly authService = inject(AuthService);
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
@@ -170,7 +192,9 @@ export class LoginComponent {
     this.error = '';
     this.cargando = true;
 
-    this.authService.login({ usuario, password: this.password }).subscribe({
+    this.authService.login({ usuario, password: this.password }).pipe(
+      takeUntilDestroyed(this.destroyRef)
+    ).subscribe({
       next: ({ token, roles }) => {
         this.cargando = false;
 
@@ -187,6 +211,11 @@ export class LoginComponent {
         const destino = vieneDelCarrito
           ? '/carrito'
           : roles.includes('ADMIN') ? '/admin/pedidos' : '/home';
+
+        if (this.enModal()) {
+          this.sesionConfirmada.emit();
+          if (destino === '/home') return;
+        }
 
         void this.router.navigate([destino]);
       },
