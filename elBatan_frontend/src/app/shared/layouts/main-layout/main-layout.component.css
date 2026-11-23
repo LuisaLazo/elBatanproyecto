@@ -1,10 +1,55 @@
-:host{
-    display: flex;
-    flex-direction: column;
-    min-height: 100vh;
-
+:host {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
 }
-main{
-    flex-grow: 1;
-    
+
+main {
+  flex-grow: 1;
+}
+
+.modal-acceso {
+  position: fixed;
+  inset: 0;
+  width: min(27.5rem, calc(100% - 2rem));
+  max-height: calc(100dvh - 2rem);
+  margin: auto;
+  padding: 0;
+  overflow: auto;
+  border: 0;
+  border-radius: 1.25rem;
+  background: #fff;
+  color: #243428;
+  box-shadow: 0 20px 72px rgb(0 0 0 / 30%);
+}
+
+.modal-registro {
+  width: min(39rem, calc(100% - 2rem));
+}
+
+.modal-acceso::backdrop {
+  background: rgb(13 25 16 / 66%);
+}
+
+.cerrar-acceso {
+  position: absolute;
+  z-index: 1;
+  top: .7rem;
+  right: .7rem;
+  display: grid;
+  width: 2.5rem;
+  height: 2.5rem;
+  place-items: center;
+  padding: 0;
+  border: 1px solid rgb(255 255 255 / 65%);
+  border-radius: 50%;
+  background: #254832;
+  color: #fff;
+  font-size: 1.55rem;
+  line-height: 1;
+}
+
+.cerrar-acceso:focus-visible {
+  outline: 2px solid #ffdda9;
+  outline-offset: 3px;
 }

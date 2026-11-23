@@ -34,6 +34,17 @@ import { AuthService } from '../../core/services/auth.service';
                ariaCurrentWhenActive="page">
               Gestión de productos
             </a>
+            <a class="nav-link text-white"
+              routerLink="/admin/reportes"
+              routerLinkActive="bg-white bg-opacity-10 fw-semibold">
+              Reportes
+            </a>
+
+            <a class="nav-link text-white"
+              routerLink="/admin/usuarios"
+              routerLinkActive="bg-white bg-opacity-10 fw-semibold">
+              Gestión de usuarios
+            </a>
           </nav>
 
           <div class="d-flex flex-wrap gap-2 mt-4">
@@ -64,7 +75,8 @@ export class AdminLayoutComponent {
   }
 
   cerrarSesion(): void {
-    this.authService.cerrarSesion();
-    void this.router.navigate(['/login']);
-  }
+  this.authService.cerrarSesion();
+
+  void this.router.navigate(['/home']);
+}
 }

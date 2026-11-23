@@ -33,11 +33,11 @@ export class CarritoComponent {
     }
 
     if (!localStorage.getItem('elBatan.token')) {
-      await this.router.navigate(['/login'], {
-        queryParams: { destino: 'carrito' }
-      });
-      return;
-    }
+  await this.router.navigate(['/home'], {
+    queryParams: { acceso: 'login' }
+  });
+  return;
+}
 
     const direccion = this.direccion.trim();
     const telefonoEntrega = this.telefonoEntrega.trim();

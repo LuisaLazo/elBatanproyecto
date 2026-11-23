@@ -1,5 +1,67 @@
-<app-header></app-header>
+
+<!-- ENCABEZADO -->
+<app-header
+  (abrirAcceso)="abrirModal(acceso)">
+</app-header>
+
+<!-- CONTENIDO PRINCIPAL -->
 <main class="main-content">
-<router-outlet></router-outlet>
+  <router-outlet></router-outlet>
 </main>
+
+<!-- PIE DE PÁGINA -->
 <app-footer></app-footer>
+
+<!-- MODAL DE ACCESO -->
+<dialog
+  #acceso
+  class="modal-acceso"
+  [class.modal-registro]="vistaAcceso === 'registro'"
+  [attr.aria-label]="
+    vistaAcceso === 'registro'
+      ? 'Crear cuenta'
+      : 'Iniciar sesión'
+  "
+  (close)="vistaAcceso = null"
+>
+
+  <!-- BOTÓN CERRAR -->
+  <button
+    #cerrar
+    type="button"
+    class="cerrar-acceso"
+    aria-label="Cerrar ventana"
+    autofocus
+    (click)="acceso.close()"
+  >
+    ×
+  </button>
+
+  <!-- FORMULARIO DE LOGIN -->
+  @if (vistaAcceso === 'login') {
+
+    <app-login
+      [enModal]="true"
+      (pedirRegistro)="
+        vistaAcceso = 'registro';
+        cerrar.focus()
+      "
+      (sesionConfirmada)="acceso.close()">
+    </app-login>
+
+  }
+
+  <!-- FORMULARIO DE REGISTRO -->
+  @else if (vistaAcceso === 'registro') {
+
+    <app-registro
+      [enModal]="true"
+      (pedirLogin)="
+        vistaAcceso = 'login';
+        cerrar.focus()
+      ">
+    </app-registro>
+
+  }
+
+</dialog>

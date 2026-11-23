@@ -1,0 +1,393 @@
+
+<div class="repartidor-page">
+
+  <!-- ENCABEZADO -->
+  <header class="panel-header">
+    <div class="header-content">
+      <div class="header-icon">
+        <i class="bi bi-truck"></i>
+      </div>
+
+      <div>
+        <span class="header-eyebrow">
+          EL BATÁN · REPARTOS
+        </span>
+        <h1>Panel del repartidor</h1>
+        <p>Gestiona tus pedidos y confirma tus entregas.</p>
+      </div>
+    </div>
+
+    <div class="header-actions">
+      <button
+        class="btn-header"
+        (click)="cargarPedidos()"
+        [disabled]="cargando || procesando">
+        <i class="bi bi-arrow-clockwise"></i>
+        Actualizar
+      </button>
+
+      <button
+        class="btn-header btn-salir"
+        (click)="cerrarSesion()">
+        <i class="bi bi-box-arrow-right"></i>
+        Salir
+      </button>
+    </div>
+  </header>
+
+  <main class="panel-content">
+
+    <!-- ESTADÍSTICAS -->
+    <section class="estadisticas">
+
+      <article class="estadistica-card">
+        <div class="estadistica-icon disponibles-icon">
+          <i class="bi bi-box-seam"></i>
+        </div>
+        <div>
+          <p>Pedidos disponibles</p>
+          <h2>{{ totalDisponibles }}</h2>
+          <span>Listos para asignar</span>
+        </div>
+      </article>
+
+      <article class="estadistica-card">
+        <div class="estadistica-icon pendientes-icon">
+          <i class="bi bi-bicycle"></i>
+        </div>
+        <div>
+          <p>En camino</p>
+          <h2>{{ totalPendientes }}</h2>
+          <span>Entregas pendientes</span>
+        </div>
+      </article>
+
+      <article class="estadistica-card">
+        <div class="estadistica-icon entregados-icon">
+          <i class="bi bi-check-circle"></i>
+        </div>
+        <div>
+          <p>Entregados</p>
+          <h2>{{ totalEntregados }}</h2>
+          <span>Pedidos confirmados</span>
+        </div>
+      </article>
+
+    </section>
+
+    <!-- MENSAJES -->
+    <div
+      *ngIf="error"
+      class="mensaje mensaje-error"
+      role="alert">
+      <i class="bi bi-exclamation-triangle"></i>
+      <span>{{ error }}</span>
+    </div>
+
+    <div
+      *ngIf="mensaje"
+      class="mensaje mensaje-exito"
+      role="status">
+      <i class="bi bi-check-circle"></i>
+      <span>{{ mensaje }}</span>
+    </div>
+
+    <!-- CONTENIDO -->
+    <section class="pedidos-section">
+
+      <div class="section-header">
+        <div>
+          <h2>Gestión de entregas</h2>
+          <p>Selecciona los pedidos que deseas gestionar.</p>
+        </div>
+      </div>
+
+      <!-- PESTAÑAS -->
+      <div class="pestanas">
+        <button
+          class="pestana"
+          [class.activa]="pestanaActiva === 'disponibles'"
+          (click)="cambiarPestana('disponibles')">
+          <i class="bi bi-box-seam"></i>
+          Disponibles
+          <span class="contador">{{ totalDisponibles }}</span>
+        </button>
+
+        <button
+          class="pestana"
+          [class.activa]="pestanaActiva === 'entregas'"
+          (click)="cambiarPestana('entregas')">
+          <i class="bi bi-truck"></i>
+          Mis entregas
+          <span class="contador">{{ misEntregas.length }}</span>
+        </button>
+      </div>
+
+      <!-- CARGANDO -->
+      <div *ngIf="cargando" class="estado-vacio">
+        <div class="spinner-border text-success"></div>
+        <p>Cargando pedidos...</p>
+      </div>
+
+      <ng-container *ngIf="!cargando">
+
+        <!-- PEDIDOS DISPONIBLES -->
+        <div
+          *ngIf="pestanaActiva === 'disponibles'"
+          class="pedidos-grid">
+
+          <div
+            *ngIf="disponibles.length === 0"
+            class="estado-vacio ancho-completo">
+            <i class="bi bi-inbox"></i>
+            <h3>No hay pedidos disponibles</h3>
+            <p>Los nuevos pedidos aparecerán aquí.</p>
+          </div>
+
+          <article
+            class="pedido-card"
+            *ngFor="
+              let pedido of disponibles;
+              trackBy: trackByPedido
+            ">
+
+            <div class="pedido-header">
+              <div>
+                <span class="pedido-label">PEDIDO</span>
+                <h3>{{ codigo(pedido) }}</h3>
+              </div>
+
+              <span class="estado-badge estado-disponible">
+                <i class="bi bi-clock"></i>
+                Disponible
+              </span>
+            </div>
+
+            <div class="pedido-body">
+
+              <div class="dato">
+                <i class="bi bi-person"></i>
+                <div>
+                  <span>Cliente</span>
+                  <strong>{{ pedido.cliente }}</strong>
+                </div>
+              </div>
+
+              <div class="dato">
+                <i class="bi bi-geo-alt"></i>
+                <div>
+                  <span>Dirección de entrega</span>
+                  <strong>
+                    {{ pedido.direccion || 'Sin dirección' }}
+                  </strong>
+                </div>
+              </div>
+
+              <div class="dato" *ngIf="pedido.referencia">
+                <i class="bi bi-pin-map"></i>
+                <div>
+                  <span>Referencia</span>
+                  <strong>{{ pedido.referencia }}</strong>
+                </div>
+              </div>
+
+              <div class="dato" *ngIf="pedido.telefonoEntrega">
+                <i class="bi bi-telephone"></i>
+                <div>
+                  <span>Teléfono</span>
+                  <strong>{{ pedido.telefonoEntrega }}</strong>
+                </div>
+              </div>
+
+              <div class="productos">
+                <h4>Productos</h4>
+
+                <div
+                  class="producto-linea"
+                  *ngFor="let item of pedido.productos">
+                  <span>
+                    {{ item.cantidad }} × {{ item.producto }}
+                  </span>
+                  <span>
+                    S/ {{ item.subtotal | number:'1.2-2' }}
+                  </span>
+                </div>
+              </div>
+
+              <div class="pedido-total">
+                <span>Total del pedido</span>
+                <strong>
+                  S/ {{ pedido.total | number:'1.2-2' }}
+                </strong>
+              </div>
+
+            </div>
+
+            <div class="pedido-footer">
+              <button
+                class="btn-principal"
+                [disabled]="procesando"
+                (click)="tomarPedido(pedido)">
+                <i class="bi bi-check2-circle"></i>
+                Tomar pedido
+              </button>
+            </div>
+
+          </article>
+        </div>
+
+        <!-- MIS ENTREGAS -->
+        <div
+          *ngIf="pestanaActiva === 'entregas'"
+          class="pedidos-grid">
+
+          <div
+            *ngIf="misEntregas.length === 0"
+            class="estado-vacio ancho-completo">
+            <i class="bi bi-truck"></i>
+            <h3>Aún no tienes entregas</h3>
+            <p>Toma un pedido disponible para comenzar.</p>
+          </div>
+
+          <article
+            class="pedido-card"
+            *ngFor="
+              let pedido of misEntregas;
+              trackBy: trackByPedido
+            ">
+
+            <div class="pedido-header">
+              <div>
+                <span class="pedido-label">MI ENTREGA</span>
+                <h3>{{ codigo(pedido) }}</h3>
+              </div>
+
+              <span
+                class="estado-badge"
+                [class.estado-camino]="pedido.estado === 'EN_CAMINO'"
+                [class.estado-entregado]="pedido.estado === 'RECIBIDO'">
+                {{ pedido.estado === 'EN_CAMINO'
+                  ? 'En camino'
+                  : pedido.estado === 'RECIBIDO'
+                    ? 'Entregado'
+                    : pedido.estado }}
+              </span>
+            </div>
+
+            <div class="pedido-body">
+
+              <div class="dato">
+                <i class="bi bi-person"></i>
+                <div>
+                  <span>Cliente</span>
+                  <strong>{{ pedido.cliente }}</strong>
+                </div>
+              </div>
+
+              <div class="dato">
+                <i class="bi bi-geo-alt"></i>
+                <div>
+                  <span>Dirección</span>
+                  <strong>
+                    {{ pedido.direccion || 'Sin dirección' }}
+                  </strong>
+                </div>
+              </div>
+
+              <div class="dato" *ngIf="pedido.referencia">
+                <i class="bi bi-pin-map"></i>
+                <div>
+                  <span>Referencia</span>
+                  <strong>{{ pedido.referencia }}</strong>
+                </div>
+              </div>
+
+              <div class="dato" *ngIf="pedido.telefonoEntrega">
+                <i class="bi bi-telephone"></i>
+                <div>
+                  <span>Teléfono</span>
+                  <strong>{{ pedido.telefonoEntrega }}</strong>
+                </div>
+              </div>
+
+              <div class="productos">
+                <h4>Productos</h4>
+
+                <div
+                  class="producto-linea"
+                  *ngFor="let item of pedido.productos">
+                  <span>
+                    {{ item.cantidad }} × {{ item.producto }}
+                  </span>
+                  <span>
+                    S/ {{ item.subtotal | number:'1.2-2' }}
+                  </span>
+                </div>
+              </div>
+
+              <div class="pedido-total">
+                <span>Total del pedido</span>
+                <strong>
+                  S/ {{ pedido.total | number:'1.2-2' }}
+                </strong>
+              </div>
+
+              <!-- CONFIRMAR ENTREGA -->
+              <div
+                class="evidencia-section"
+                *ngIf="pedido.estado === 'EN_CAMINO'">
+
+                <h4>
+                  <i class="bi bi-camera"></i>
+                  Evidencia de entrega
+                </h4>
+
+                <p>
+                  Adjunta una fotografía para confirmar
+                  que el pedido fue entregado.
+                </p>
+
+                <input
+                  type="file"
+                  accept="image/jpeg,image/png"
+                  class="form-control"
+                  [id]="'evidencia-' + pedido.idPedido"
+                  (change)="seleccionarArchivo(
+                    pedido.idPedido,
+                    $event
+                  )"
+                />
+
+                <small
+                  *ngIf="archivos[pedido.idPedido]"
+                  class="archivo-seleccionado">
+                  <i class="bi bi-check-circle"></i>
+                  {{ archivos[pedido.idPedido]?.name }}
+                </small>
+
+                <button
+                  class="btn-principal mt-3"
+                  [disabled]="procesando || !archivos[pedido.idPedido]"
+                  (click)="confirmarEntrega(pedido)">
+                  <i class="bi bi-check2-circle"></i>
+                  Confirmar entrega
+                </button>
+
+              </div>
+
+              <button
+                *ngIf="pedido.evidenciaEntrega"
+                class="btn-secundario"
+                (click)="verEvidencia(pedido)">
+                <i class="bi bi-image"></i>
+                Ver evidencia
+              </button>
+
+            </div>
+          </article>
+        </div>
+
+      </ng-container>
+    </section>
+  </main>
+</div>

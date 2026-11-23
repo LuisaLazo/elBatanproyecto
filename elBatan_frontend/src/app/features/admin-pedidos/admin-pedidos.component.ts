@@ -325,7 +325,7 @@ export class AdminPedidosComponent implements OnInit {
     });
   }
 
-  imprimirTicket(pedido: PedidoHistorial): void {
+  async imprimirTicket(pedido: PedidoHistorial): Promise<void> {
     const ventana = window.open('', '_blank', 'popup,width=420,height=600');
 
     if (!ventana) {
@@ -360,7 +360,17 @@ export class AdminPedidosComponent implements OnInit {
         width: 100%;
         max-width: 72mm;
         margin: 0 auto;
-        padding: 3mm;
+        padding: 2mm;
+      }
+
+      .logo-ticket {
+        display: block;
+        width: 48mm;
+        max-width: 100%;
+        height: auto;
+        aspect-ratio: 3 / 2;
+        object-fit: contain;
+        margin: 0 auto 2mm;
       }
 
       h1, h2 {
@@ -390,20 +400,24 @@ export class AdminPedidosComponent implements OnInit {
       .total {
         font-size: 15px;
         font-weight: bold;
-        text-align: right;
+        text-align: center;
       }
     `;
     documento.head.append(estilos);
 
     const ticket = documento.createElement('main');
 
-    const marca = documento.createElement('h1');
-    marca.textContent = 'El Batán';
+    const logo = documento.createElement('img');
+    logo.className = 'logo-ticket';
+    logo.alt = 'El Batán';
+    logo.width = 144;
+    logo.height = 96;
+    logo.src = new URL('logo-el-batan-transparente.png', document.baseURI).href;
 
     const titulo = documento.createElement('h2');
     titulo.textContent = `Ticket de pedido ${pedido.codigoPedido}`;
 
-    ticket.append(marca, titulo, documento.createElement('hr'));
+    ticket.append(logo, titulo, documento.createElement('hr'));
 
     for (const linea of [
       `Cliente: ${pedido.cliente}`,
@@ -441,8 +455,18 @@ export class AdminPedidosComponent implements OnInit {
     ticket.append(documento.createElement('hr'), total);
     documento.body.replaceChildren(ticket);
 
-    ventana.focus();
-    ventana.print();
+    try {
+      await logo.decode();
+    } catch {
+      const marca = documento.createElement('h1');
+      marca.textContent = 'El Batán';
+      logo.replaceWith(marca);
+    }
+
+    if (!ventana.closed) {
+      ventana.focus();
+      ventana.print();
+    }
   }
 
   private mensajeError(status: number, mensaje: string): string {

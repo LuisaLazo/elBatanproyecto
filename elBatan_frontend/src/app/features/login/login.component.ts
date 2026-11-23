@@ -1,4 +1,13 @@
-import { Component, inject } from '@angular/core';
+
+import {
+  Component,
+  DestroyRef,
+  inject,
+  input,
+  output
+} from '@angular/core';
+
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../core/services/auth.service';
@@ -8,47 +17,93 @@ import { AuthService } from '../../core/services/auth.service';
   standalone: true,
   imports: [FormsModule, RouterLink],
   template: `
-    <section class="login-page" aria-labelledby="login-titulo">
+    <section
+      class="login-page"
+      [class.en-modal]="enModal()"
+      aria-labelledby="login-titulo"
+    >
       <div class="login-card">
+
         <header class="login-header">
           <span class="login-icon" aria-hidden="true">
             <i class="bi bi-person"></i>
           </span>
+
           <h1 id="login-titulo">Iniciar sesión</h1>
         </header>
 
         <div class="login-body">
+
           <form (ngSubmit)="iniciarSesion()">
+
             <div class="mb-3">
-              <label for="usuario" class="form-label">Usuario</label>
-              <input id="usuario" name="usuario" type="text"
-                     class="form-control" [(ngModel)]="usuario"
-                     autocomplete="username" placeholder="Ingresa tu usuario"
-                     required>
+              <label for="usuario" class="form-label">
+                Usuario
+              </label>
+
+              <input
+                id="usuario"
+                name="usuario"
+                type="text"
+                class="form-control"
+                [(ngModel)]="usuario"
+                autocomplete="username"
+                placeholder="Ingresa tu usuario"
+                required
+              >
             </div>
 
             <div class="mb-3">
-              <label for="password" class="form-label">Contraseña</label>
-              <input id="password" name="password" type="password"
-                     class="form-control" [(ngModel)]="password"
-                     autocomplete="current-password"
-                     placeholder="Ingresa tu contraseña" required>
+              <label for="password" class="form-label">
+                Contraseña
+              </label>
+
+              <input
+                id="password"
+                name="password"
+                type="password"
+                class="form-control"
+                [(ngModel)]="password"
+                autocomplete="current-password"
+                placeholder="Ingresa tu contraseña"
+                required
+              >
             </div>
 
             @if (error) {
-              <p class="alert alert-danger py-2" role="alert">{{ error }}</p>
+              <p class="alert alert-danger py-2" role="alert">
+                {{ error }}
+              </p>
             }
 
-            <button class="btn login-submit w-100" type="submit"
-                    [disabled]="cargando">
+            <button
+              class="btn login-submit w-100"
+              type="submit"
+              [disabled]="cargando"
+            >
               {{ cargando ? 'Ingresando…' : 'Ingresar' }}
             </button>
+
           </form>
 
           <p class="login-registro">
             ¿Todavía no tienes cuenta?
-            <a routerLink="/registro">Crear cuenta</a>
+
+            @if (enModal()) {
+              <button
+                type="button"
+                class="btn btn-link p-0 link-success fw-bold"
+                (click)="pedirRegistro.emit()"
+              >
+                Crear cuenta
+              </button>
+            } @else {
+              <a routerLink="/registro">
+                Crear cuenta
+              </a>
+            }
           </p>
+
         </div>
       </div>
     </section>
@@ -62,13 +117,24 @@ import { AuthService } from '../../core/services/auth.service';
       padding: clamp(2rem, 5vw, 4rem) 1rem;
     }
 
+    .login-page.en-modal {
+      padding: 0;
+    }
+
     .login-card {
       width: min(100%, 440px);
       overflow: hidden;
       border: 1px solid var(--borde);
       border-radius: 1.25rem;
       background: #fff;
-      box-shadow: 0 12px 32px rgba(36, 56, 40, .10);
+      box-shadow: 0 12px 32px rgb(36 56 40 / 10%);
+    }
+
+    .en-modal .login-card {
+      width: 100%;
+      border: 0;
+      border-radius: 0;
+      box-shadow: none;
     }
 
     .login-header {
@@ -84,7 +150,7 @@ import { AuthService } from '../../core/services/auth.service';
       height: 2.75rem;
       margin-bottom: .65rem;
       place-items: center;
-      border: 1px solid rgba(255, 255, 255, .35);
+      border: 1px solid rgb(255 255 255 / 35%);
       border-radius: 50%;
       font-size: 1.35rem;
     }
@@ -112,7 +178,7 @@ import { AuthService } from '../../core/services/auth.service';
 
     .form-control:focus {
       border-color: var(--verde-batan);
-      box-shadow: 0 0 0 .2rem rgba(46, 83, 55, .18);
+      box-shadow: 0 0 0 .2rem rgb(46 83 55 / 18%);
     }
 
     .login-submit {
@@ -151,6 +217,13 @@ import { AuthService } from '../../core/services/auth.service';
   `]
 })
 export class LoginComponent {
+
+  readonly enModal = input(false);
+
+  readonly pedirRegistro = output<void>();
+  readonly sesionConfirmada = output<void>();
+
+  private readonly destroyRef = inject(DestroyRef);
   private readonly authService = inject(AuthService);
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
@@ -161,6 +234,7 @@ export class LoginComponent {
   cargando = false;
 
   iniciarSesion(): void {
+
     const usuario = this.usuario.trim();
 
     if (this.cargando || !usuario || !this.password) {
@@ -170,29 +244,82 @@ export class LoginComponent {
     this.error = '';
     this.cargando = true;
 
-    this.authService.login({ usuario, password: this.password }).subscribe({
+    this.authService.login({
+      usuario,
+      password: this.password
+    })
+    .pipe(takeUntilDestroyed(this.destroyRef))
+    .subscribe({
+
       next: ({ token, roles }) => {
+
         this.cargando = false;
+
+        // Normalizar roles del backend
+        const rolesUsuario = roles.map(rol =>
+          rol.replace(/^ROLE_/i, '').trim().toUpperCase()
+        );
 
         const vieneDelCarrito =
           this.route.snapshot.queryParamMap.get('destino') === 'carrito';
 
-        if (vieneDelCarrito && !roles.includes('CLIENTE')) {
-          this.error = 'Usa una cuenta con rol CLIENTE para hacer el pedido.';
+        if (
+          vieneDelCarrito &&
+          !rolesUsuario.includes('CLIENTE')
+        ) {
+          this.error =
+            'Usa una cuenta con rol CLIENTE para hacer el pedido.';
           return;
         }
 
-        this.authService.iniciarSesion(token, roles);
+        // Guardar JWT y roles
+        this.authService.iniciarSesion(
+          token,
+          rolesUsuario
+        );
 
-        const destino = vieneDelCarrito
-          ? '/carrito'
-          : roles.includes('ADMIN') ? '/admin/pedidos' : '/home';
+        // Determinar destino
+        let destino: string;
 
-        void this.router.navigate([destino]);
+        if (vieneDelCarrito) {
+          destino = '/carrito';
+
+        } else if (rolesUsuario.includes('ADMIN')) {
+          destino = '/admin/pedidos';
+
+        } else if (rolesUsuario.includes('REPARTIDOR')) {
+          destino = '/repartidor';
+
+        } else {
+          destino = '/home';
+        }
+
+        // Notificar al componente que controla el modal
+        if (this.enModal()) {
+          this.sesionConfirmada.emit();
+
+          // Clientes permanecen en la página actual
+          // excepto cuando vienen del carrito
+          if (
+            destino === '/home' &&
+            !vieneDelCarrito
+          ) {
+            return;
+          }
+        }
+
+        void this.router.navigateByUrl(destino);
       },
-      error: () => {
+
+      error: (err) => {
+
         this.cargando = false;
-        this.error = 'No se pudo iniciar sesión. Revisa tus datos y que el backend esté encendido.';
+
+        console.error('Error iniciando sesión:', err);
+
+        this.error =
+          'No se pudo iniciar sesión. ' +
+          'Revisa tus datos y que el backend esté encendido.';
       }
     });
   }
