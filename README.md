@@ -1,14 +1,14 @@
 
-| EL BATÁN S.A.C. |
-### Sistema de Gestión de Restaurante, Pedidos y Delivery
+-- | EL BATÁN S.A.C. | --
+1. Sistema de Gestión de Restaurante, Pedidos y Delivery
 
 Repositorio del proyecto académico **EL BATÁN S.A.C.**, desarrollado para el curso de Análisis y Diseño de Sistemas.
 
 El sistema tiene como objetivo digitalizar y mejorar la gestión de pedidos, productos, clientes y servicio de delivery del restaurante, permitiendo una administración más organizada y eficiente.
 
-## Tecnologías utilizadas
+2. Tecnologías utilizadas
 
-### Backend
+BACKEND
 - Java 21
 - Spring Boot 3.4.1
 - Spring Security
@@ -17,47 +17,46 @@ El sistema tiene como objetivo digitalizar y mejorar la gestión de pedidos, pro
 - Maven
 - Swagger / OpenAPI
 
-### Frontend
+FRONTEND
 - Angular
 - TypeScript
 - HTML5
 - CSS3
 - Bootstrap
 
-### Base de datos
+BASE DE DATOS
 - Oracle Database
 - Oracle SQL Developer
 
-### Herramientas de desarrollo
+HERRAMIENTAS DE DESARROLLO
 - IntelliJ IDEA
 - Visual Studio Code
 - Git y GitHub
-- Swagger
+- Swagger | Sprint Boot
 
-## Ramas de trabajo
-
-- `main`: rama principal de integración del proyecto.
+3. RAMAS DE TRABAJO
+- `main`: rama principal de integración del proyecto - DESARROLLADORES
+- `master`: rama principal de la dueña del repositorio
 - `backend`: desarrollo de servicios, controladores y seguridad, si se utiliza esta rama.
 - `frontend`: desarrollo de interfaces Angular, si se utiliza esta rama.
 
 Cada integrante trabaja en sus funcionalidades asignadas y los cambios se integran mediante GitHub para mantener el proyecto organizado.
 
-## Funcionalidades del sistema
-
-### Módulo de autenticación
+4. FUNCIONES DEL SISTEMA
+--- MÓDULO DE AUTENTICACIÓN
 - Inicio de sesión de usuarios.
 - Autenticación mediante JWT.
 - Control de acceso según roles.
 - Protección de endpoints con Spring Security.
 
-### Módulo de productos
+--- MÓDULO DE PRODUCTOS
 - Registro de productos.
 - Listado de productos disponibles.
 - Actualización de información.
 - Control de precios y stock.
 - Gestión de la carta del restaurante.
 
-### Módulo de pedidos
+--- MÓDULO DE PEDIDOS
 - Registro de pedidos.
 - Selección de productos y cantidades.
 - Cálculo automático del total.
@@ -65,27 +64,26 @@ Cada integrante trabaja en sus funcionalidades asignadas y los cambios se integr
 - Consulta del detalle de los pedidos.
 - Actualización del estado de los pedidos.
 
-### Módulo de delivery
+--- MÓDULO DE DELIVERY
 - Registro de la dirección del cliente.
 - Gestión de pedidos para entrega.
 - Consulta del estado de los pedidos.
 
-### Panel de administración
+--- PANEL DE ADMINISTRACIÓN
 - Gestión de productos.
 - Administración de la carta.
 - Visualización de pedidos.
 - Actualización del estado de pedidos.
 - Control de usuarios según permisos.
 
-### Interfaz del cliente
+--- INTERFAZ DEL CLIENTE
 - Inicio de sesión y registro.
 - Visualización de la carta.
 - Selección de productos.
 - Realización de pedidos.
 - Solicitud de delivery.
 
-## Arquitectura del sistema
-
+5. ARQUITECTURA DEL SISTEMA
 El proyecto utiliza una arquitectura en capas para separar las responsabilidades del sistema.
 
 - **Controller:** recibe las solicitudes HTTP.
@@ -97,8 +95,7 @@ El proyecto utiliza una arquitectura en capas para separar las responsabilidades
 
 La comunicación entre Angular y Spring Boot se realiza mediante API REST utilizando JSON.
 
-## Requisitos para ejecutar el proyecto
-
+6. REQUISITOS PARA EJECUTAR EL PROYECTO
 - JDK 21 o superior.
 - Node.js compatible con la versión de Angular instalada.
 - Angular CLI.
@@ -107,8 +104,7 @@ La comunicación entre Angular y Spring Boot se realiza mediante API REST utiliz
 - Visual Studio Code.
 - Maven o Maven Wrapper.
 
-## Ejecutar el backend
-
+--- EJECUTAR EL BACKEND
 1. Clonar el repositorio de GitHub.
 2. Abrir el proyecto backend en IntelliJ IDEA.
 3. Configurar la conexión a Oracle.
@@ -129,8 +125,7 @@ La documentación Swagger puede consultarse en:
 
 `http://localhost:8080/swagger-ui/index.html`
 
-## Ejecutar el frontend
-
+--- EJECUTAR EL FRONTEND
 1. Abrir el proyecto Angular en Visual Studio Code.
 2. Abrir una terminal en la carpeta del frontend.
 3. Instalar las dependencias.
@@ -147,8 +142,7 @@ Abrir en el navegador:
 
 Verificar que la URL de la API corresponda a la dirección del backend.
 
-## Configuración de base de datos
-
+--- CONFIGURACIÓN EN LA BASE DE DATOS
 El sistema utiliza Oracle Database para almacenar información de:
 
 - Usuarios y roles.
