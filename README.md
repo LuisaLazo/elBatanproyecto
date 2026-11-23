@@ -2,7 +2,7 @@
 -- | EL BATÁN S.A.C. | --
 1. Sistema de Gestión de Restaurante, Pedidos y Delivery
 
-Repositorio del proyecto académico **EL BATÁN S.A.C.**, desarrollado para el curso de Análisis y Diseño de Sistemas.
+Repositorio del proyecto académico **EL BATÁN S.A.C.**, desarrollado para los cursos de Análisis y Diseño de Sistemas, Lenguaje de Programación y Base de datos.
 
 El sistema tiene como objetivo digitalizar y mejorar la gestión de pedidos, productos, clientes y servicio de delivery del restaurante, permitiendo una administración más organizada y eficiente.
 
