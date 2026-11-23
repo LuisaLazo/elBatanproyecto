@@ -8,17 +8,18 @@
 .navbar-brand {
   display: grid !important;
   place-items: center;
-  padding-inline: .65rem;
-  background: #f7ead8;
-  border-radius: .8rem;
+  flex: 0 0 auto;
+  padding-inline: .25rem;
+  background: transparent;
 }
 
 .brand-logo {
   display: block;
-  width: 6rem;
+  width: clamp(6.5rem, 11vw, 8rem);
   height: auto;
   aspect-ratio: 3 / 2;
   object-fit: contain;
+  filter: brightness(0) invert(1);
 }
 
 .navbar .nav-link {
@@ -103,9 +104,5 @@
     flex-wrap: wrap;
     gap: .2rem .35rem !important;
     padding-inline: .65rem;
-  }
-
-  .brand-logo {
-    width: 7rem;
   }
 }
